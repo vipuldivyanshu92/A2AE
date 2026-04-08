@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+escrow.db
+.env
+ui/node_modules/
+ui/dist/
