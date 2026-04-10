@@ -28,6 +28,10 @@ class HandshakeAccept(BaseModel):
     """Doer accepts the Job Spec terms."""
 
     doer_id: str = Field(...)
+    dispute_policy: str | None = Field(
+        None,
+        description="retry | arbitration | refund; defaults to refund if omitted or invalid",
+    )
 
 
 class HandshakeCounteroffer(BaseModel):
@@ -37,3 +41,7 @@ class HandshakeCounteroffer(BaseModel):
     counter_amount: str | None = Field(None)
     counter_deadline: datetime | None = Field(None)
     notes: str | None = Field(None)
+    dispute_policy: str | None = Field(
+        None,
+        description="retry | arbitration | refund; defaults to refund if omitted or invalid",
+    )

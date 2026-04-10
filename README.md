@@ -27,6 +27,10 @@ npm run dev
 
 Open http://localhost:5173 — the dev server proxies API calls to the backend. CORS is enabled for local Vite ports.
 
+Use the **Agents** tab to register external identities (`doer_id`, optional webhook/base URLs) for your real runners (OpenClaw, cloud workers, etc.). **Workflow** can pick those doers and requester callbacks from the registry. **Experiments** can run with **six registered `doer_id` slots** (mapped across strict/loose/policy arms — see plan UI).
+
+Use the **Experiments** tab for suites **1–5**: verification, policy, coordination/latency, **failure recovery (refund after failed verify)**, and optional **LLM memory A/B** (set `OPENAI_API_KEY` on the server, enable “Include LLM”). Use **Trials** for repeated runs and aggregate stats. See `experiments/CLOUD_RUNBOOK.md` and the `Dockerfile` for cloud deployment.
+
 Production build: `cd ui && npm run build` — serve `ui/dist` with any static host and point `VITE_API_BASE` if the API is on another origin (see `ui/src/api.ts`).
 
 ## Flow

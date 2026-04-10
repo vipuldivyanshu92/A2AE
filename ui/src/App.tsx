@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { agentsWithDoerRole } from "./agentsRegistry";
+import { AgentsPanel } from "./AgentsPanel";
+import { useAgents } from "./AgentsContext";
 import {
   createJob,
   fetchMetrics,
@@ -14,6 +17,7 @@ import {
   type JobSnapshot,
   type Metrics,
 } from "./api";
+import { ExperimentsDashboard } from "./ExperimentsDashboard";
 
 const STEPS = [
   { id: "create", label: "Create job" },
@@ -51,7 +55,17 @@ function stepFromStatus(status: string): number {
   return 0;
 }
 
+type AppView = "workflow" | "experiments" | "agents";
+
 export default function App() {
+  const { agents } = useAgents();
+  const doerPickList = useMemo(() => agentsWithDoerRole(agents), [agents]);
+  const requesterPickList = useMemo(
+    () => agents.filter((a) => a.role === "requester" || a.role === "both"),
+    [agents]
+  );
+
+  const [view, setView] = useState<AppView>("workflow");
   const [jobId, setJobId] = useState("");
   const [job, setJob] = useState<JobSnapshot | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -142,9 +156,38 @@ export default function App() {
         <div className="app-header-inner">
           <div className="brand">
             <h1>Agentic Escrow</h1>
-            <p>Walk through the full agent-to-agent escrow lifecycle</p>
+            <p>
+              {view === "workflow"
+                ? "Walk through the full agent-to-agent escrow lifecycle"
+                : view === "experiments"
+                  ? "Run and simulate multi-agent experiment suites"
+                  : "Register external agent identities and integration hints"}
+            </p>
+            <nav className="app-nav" aria-label="Primary">
+              <button
+                type="button"
+                className={view === "workflow" ? "nav-tab active" : "nav-tab"}
+                onClick={() => setView("workflow")}
+              >
+                Workflow
+              </button>
+              <button
+                type="button"
+                className={view === "agents" ? "nav-tab active" : "nav-tab"}
+                onClick={() => setView("agents")}
+              >
+                Agents
+              </button>
+              <button
+                type="button"
+                className={view === "experiments" ? "nav-tab active" : "nav-tab"}
+                onClick={() => setView("experiments")}
+              >
+                Experiments
+              </button>
+            </nav>
           </div>
-          {metrics && (
+          {view === "workflow" && metrics && (
             <div className="metrics-row">
               <span className="metric">
                 Completion <strong>{(metrics.completion_rate * 100).toFixed(0)}%</strong>
@@ -163,6 +206,19 @@ export default function App() {
         </div>
       </header>
 
+      {view === "experiments" && (
+        <main className="app-main app-main-experiments">
+          <ExperimentsDashboard onOpenAgents={() => setView("agents")} />
+        </main>
+      )}
+
+      {view === "agents" && (
+        <main className="app-main app-main-experiments">
+          <AgentsPanel onOpenExperiments={() => setView("experiments")} />
+        </main>
+      )}
+
+      {view === "workflow" && (
       <main className="app-main">
         <nav className="steps-nav" aria-label="Workflow steps">
           <h2>Steps</h2>
@@ -231,6 +287,26 @@ export default function App() {
                     onChange={(e) => setCallbackUrl(e.target.value)}
                   />
                 </label>
+                {requesterPickList.length > 0 && (
+                  <label>
+                    Fill callback from registered requester
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const a = requesterPickList.find((x) => x.id === e.target.value);
+                        if (a?.webhookUrl) setCallbackUrl(a.webhookUrl);
+                      }}
+                    >
+                      <option value="">— select agent —</option>
+                      {requesterPickList.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.displayName}
+                          {a.webhookUrl ? "" : " (no webhook saved)"}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 <button
                   type="button"
                   className="primary"
@@ -264,6 +340,25 @@ export default function App() {
                 Doer accepts terms or sends a counteroffer before funding.
               </p>
               <div className="form-grid">
+                {doerPickList.length > 0 && (
+                  <label>
+                    Registered doer
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v) setDoerId(v);
+                      }}
+                    >
+                      <option value="">— pick escrow doer_id —</option>
+                      {doerPickList.map((a) => (
+                        <option key={a.id} value={a.escrowDoerId}>
+                          {a.displayName} ({a.escrowDoerId})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 <label>
                   Doer ID
                   <input value={doerId} onChange={(e) => setDoerId(e.target.value)} />
@@ -489,6 +584,7 @@ export default function App() {
           )}
         </aside>
       </main>
+      )}
     </div>
   );
 }

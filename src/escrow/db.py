@@ -9,7 +9,11 @@ from . import models  # noqa: F401 - ensure all models registered
 from .models import Base
 
 _db_dir = os.path.join(os.path.dirname(__file__), "..", "..")
-DATABASE_URL = f"sqlite:///{os.path.join(_db_dir, 'escrow.db')}"
+_default_sqlite_path = os.path.join(_db_dir, "escrow.db")
+DATABASE_URL = os.environ.get(
+    "ESCROW_DATABASE_URL",
+    f"sqlite:///{_default_sqlite_path}",
+)
 
 
 def init_db(url: str = DATABASE_URL) -> None:

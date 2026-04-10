@@ -1,0 +1,12 @@
+{
+  "note": "Captured from run_agent_experiments.py; api_base http://127.0.0.1:8765; ESCROW_DATABASE_URL temp sqlite",
+  "exp3_coordination_latency": {
+    "sequential_wall_s": 0.113,
+    "parallel_wall_s": 0.14,
+    "sequential_success_rate": 1.0,
+    "parallel_success_rate": 1.0,
+    "speedup": 0.8
+  },
+  "exp1": "6/6 trials matched expected verify outcome (3 strict fail, 3 loose pass+settle)",
+  "exp2": "6/6 verify failures returned action matching handshake dispute_policy"
+}

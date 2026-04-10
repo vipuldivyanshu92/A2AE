@@ -99,6 +99,7 @@ def handshake_accept(
     from ..schemas.job_spec import JobSpec
 
     spec = JobSpec(**job.job_spec_json)
+    dp = body.dispute_policy if body.dispute_policy in ("retry", "arbitration", "refund") else "refund"
     contract = {
         "job_id": job_id,
         "job_spec": spec.model_dump(),
@@ -107,7 +108,7 @@ def handshake_accept(
         "agreed_amount": spec.max_budget or "0",
         "agreed_deadline": spec.sla_deadline.isoformat() if spec.sla_deadline else None,
         "callback_url": job.callback_url,
-        "dispute_policy": "refund",
+        "dispute_policy": dp,
         "finalized_at": datetime.utcnow().isoformat(),
     }
 
@@ -157,6 +158,7 @@ def handshake_counteroffer(
     spec = JobSpec(**job.job_spec_json)
     agreed_amount = body.counter_amount or spec.max_budget or "0"
     agreed_deadline = body.counter_deadline or spec.sla_deadline
+    dp = body.dispute_policy if body.dispute_policy in ("retry", "arbitration", "refund") else "refund"
 
     contract = {
         "job_id": job_id,
@@ -166,7 +168,7 @@ def handshake_counteroffer(
         "agreed_amount": agreed_amount,
         "agreed_deadline": agreed_deadline.isoformat() if agreed_deadline else None,
         "callback_url": job.callback_url,
-        "dispute_policy": "refund",
+        "dispute_policy": dp,
         "finalized_at": datetime.utcnow().isoformat(),
     }
 

@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.escrow.api.experiments_dashboard import router as experiments_router
 from src.escrow.api.fund import router as fund_router
 from src.escrow.api.jobs import router as jobs_router
 from src.escrow.api.metrics_endpoint import router as metrics_router
@@ -42,6 +43,7 @@ app.include_router(start_router)
 app.include_router(submit_router)
 app.include_router(settle_router)
 app.include_router(metrics_router)
+app.include_router(experiments_router)
 
 
 @app.get("/health")
