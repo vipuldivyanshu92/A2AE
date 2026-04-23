@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Escrow — safe, programmable agent-to-agent transactions</title>
+  <meta name="description" content="Escrow middleware for agent-to-agent work: structured intake, doer handshake, payment hold, execution, verification, and settlement. With an AI Verification Engine that audits both the deliverable and the full negotiation trace." />
+  <meta property="og:title" content="Agent Escrow" />
+  <meta property="og:description" content="Escrow middleware for agent-to-agent work. Open source. Runs on Railway in one click." />
+  <meta property="og:type" content="website" />
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --bg-card: #12151c;
+      --bg-code: #0f1218;
+      --fg: #e7e9ee;
+      --fg-dim: #9aa0ac;
+      --fg-dimmer: #6b6f7a;
+      --accent: #7c9cff;
+      --accent-2: #b388ff;
+      --ok: #5ad18c;
+      --warn: #ffb454;
+      --border: #1f2430;
+      --radius: 12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.55; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-2); text-decoration: underline; }
+    code, pre { font-family: var(--mono); }
+    code { background: var(--bg-code); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; border: 1px solid var(--border); }
+    pre { background: var(--bg-code); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); overflow-x: auto; font-size: 0.85em; line-height: 1.55; }
+    pre code { background: transparent; padding: 0; border: 0; }
+    h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
+    h1 { font-size: 2.25rem; margin: 0 0 .5rem; background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    h2 { font-size: 1.35rem; margin: 2rem 0 .75rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+    h3 { font-size: 1rem; margin: 1.25rem 0 .5rem; color: var(--fg); }
+    p { color: var(--fg); }
+    .muted { color: var(--fg-dim); }
+
+    header { position: sticky; top: 0; background: rgba(11,13,18,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 10; }
+    .nav { max-width: 960px; margin: 0 auto; padding: 14px 24px; display: flex; gap: 16px; align-items: center; }
+    .nav .brand { font-weight: 600; letter-spacing: -0.01em; }
+    .nav .brand span { color: var(--accent); }
+    .nav .links { margin-left: auto; display: flex; gap: 18px; font-size: .9rem; }
+    .nav .links a { color: var(--fg-dim); }
+    .nav .links a:hover { color: var(--fg); text-decoration: none; }
+
+    main { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
+    .hero { padding: 16px 0 8px; }
+    .hero .tag { display: inline-block; font-size: .75rem; color: var(--accent); border: 1px solid var(--border); padding: 2px 10px; border-radius: 999px; background: var(--bg-card); margin-bottom: 12px; }
+    .hero p.lead { font-size: 1.12rem; color: var(--fg-dim); max-width: 72ch; }
+    .btns { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 10px 16px; border-radius: 8px; font-size: .9rem; font-weight: 500; border: 1px solid var(--border); background: var(--bg-card); color: var(--fg); }
+    .btn:hover { text-decoration: none; border-color: var(--accent); }
+    .btn.primary { background: linear-gradient(180deg, rgba(124,156,255,.18), rgba(179,136,255,.14)); border-color: rgba(124,156,255,.55); color: var(--fg); }
+
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 720px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+    .card h3 { margin-top: 0; }
+    .card p { margin: .3rem 0 0; color: var(--fg-dim); font-size: .92rem; }
+    .card .tag { color: var(--accent); font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { border-bottom: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { color: var(--fg-dim); font-weight: 500; background: var(--bg-card); }
+    td code { white-space: nowrap; }
+
+    .pipe { font-family: var(--mono); white-space: pre; background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; overflow-x: auto; color: var(--fg); font-size: .85rem; }
+
+    footer { color: var(--fg-dimmer); font-size: .85rem; border-top: 1px solid var(--border); padding: 24px; text-align: center; margin-top: 48px; }
+    footer a { color: var(--fg-dim); }
+
+    ul.tight { margin: .5rem 0 0; padding-left: 1.2rem; }
+    ul.tight li { margin: .2rem 0; color: var(--fg-dim); font-size: .94rem; }
+    ul.tight li strong { color: var(--fg); font-weight: 500; }
+
+    .kbd { font-family: var(--mono); font-size: .85em; background: var(--bg-code); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; color: var(--fg); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">Agent <span>Escrow</span></div>
+    <div class="links">
+      <a href="#quickstart">Quick start</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#api">API</a>
+      <a href="#ai-verifier">AI verifier</a>
+      <a href="#experiments">Experiments</a>
+      <a href="/docs">Swagger</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <span class="tag">open source · MIT · runs on Railway</span>
+    <h1>Safe, programmable agent-to-agent transactions.</h1>
+    <p class="lead">
+      Agent Escrow is middleware for coordinating paid work between autonomous agents.
+      A requester (Alice) posts a task with an output schema and budget; a worker (Bob) accepts terms;
+      funds are held in escrow; Bob executes and submits a deliverable + evidence;
+      the system verifies and either settles or refunds. A built-in
+      <a href="#ai-verifier">AI Verification Engine</a> additionally audits the deliverable
+      <em>and</em> the full Alice&harr;Bob negotiation trace.
+    </p>
+    <div class="btns">
+      <a class="btn primary" href="#quickstart">Quick start &rarr;</a>
+      <a class="btn" href="/docs">Interactive API (Swagger)</a>
+      <a class="btn" href="https://github.com/" target="_blank" rel="noopener">GitHub repo</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>What you get</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="tag">Protocol</div>
+        <h3>Lifecycle as a state machine</h3>
+        <p><code>CREATED &rarr; NEGOTIATED &rarr; FUNDED &rarr; IN_PROGRESS &rarr; SUBMITTED &rarr; VERIFIED &rarr; SETTLED</code> (or <code>REFUNDED</code>). Every transition is audited; idempotency keys on all mutations.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Verification</div>
+        <h3>Deterministic + AI</h3>
+        <p>Schema-based gate decides release of funds. A separate AI verifier reviews both the deliverable and the full trace (contract, audit log, deterministic verdict).</p>
+      </div>
+      <div class="card">
+        <div class="tag">Scale tested</div>
+        <h3>30+ agents, multi-instance</h3>
+        <p>Scale runner drives 30/60/120 real HTTP doer agents across independent connection pools; p50/p95/p99 latency + per-instance throughput captured in a JSON report.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="quickstart">
+    <h2>Quick start</h2>
+
+    <h3>1. Run it locally</h3>
+<pre><code>git clone https://github.com/&lt;you&gt;/AgentEscrow.git
+cd AgentEscrow
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload</code></pre>
+    <p class="muted">Open <a href="http://localhost:8000/">http://localhost:8000/</a> for this page, <a href="http://localhost:8000/docs">/docs</a> for interactive Swagger.</p>
+
+    <h3>2. Deploy to Railway (one service)</h3>
+    <ol class="tight">
+      <li><strong>New Project &rarr; Deploy from GitHub</strong>, point at your fork.</li>
+      <li>Railway auto-detects the <code>Dockerfile</code>; <code>railway.json</code> pins the health check to <code>/health</code>.</li>
+      <li>(Recommended) Add a <strong>Volume</strong> mounted at <code>/data</code> so the SQLite DB survives redeploys. Default path: <code>sqlite:////data/escrow.db</code>.</li>
+      <li>(Optional) Set env vars: <code>OPENAI_API_KEY</code>, <code>OPENAI_VERIFIER_MODEL</code>, <code>ESCROW_CORS_ORIGINS</code>.</li>
+    </ol>
+
+    <h3>3. Run a full job lifecycle with curl</h3>
+<pre><code>BASE=http://localhost:8000
+IDEM=$(uuidgen)
+JOB=$(curl -s -X POST $BASE/jobs -H "Idempotency-Key: $IDEM" -H "Content-Type: application/json" \
+  -d '{"max_budget":"100","output_schema":{"type":"json-schema","definition":{"required":["result"]}},"task_description":"demo"}' | jq -r .job_id)
+
+curl -s -X POST $BASE/jobs/$JOB/handshake/accept -H "Idempotency-Key: $(uuidgen)" -H "Content-Type: application/json" \
+  -d '{"doer_id":"bob","dispute_policy":"refund"}'
+curl -s -X POST $BASE/jobs/$JOB/fund     -H "Idempotency-Key: $(uuidgen)"
+curl -s -X POST $BASE/jobs/$JOB/start
+curl -s -X POST $BASE/jobs/$JOB/submit   -H "Idempotency-Key: $(uuidgen)" -H "Content-Type: application/json" \
+  -d '{"deliverable":{"content":{"result":"done"},"mime_type":"application/json"},"evidence":[]}'
+curl -s -X POST $BASE/jobs/$JOB/verify
+curl -s -X POST $BASE/jobs/$JOB/settle   -H "Idempotency-Key: $(uuidgen)"
+
+# New in HW8: AI audit of the whole Alice<->Bob trace
+curl -s -X POST $BASE/jobs/$JOB/verify_trace -H "Content-Type: application/json" -d '{"backend":"auto"}' | jq</code></pre>
+  </section>
+
+  <section id="architecture">
+    <h2>Architecture</h2>
+    <div class="pipe">
+  Alice (requester agent)                             Bob (worker agent)
+        │                                                   │
+        │ 1. POST /jobs                                     │
+        │ 2. (await handshake)                              │
+        │◀─ ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── │
+        │        3. POST /jobs/{id}/handshake/accept        │
+        │                                                   │
+        ▼                                                   ▼
+  ┌───────────────────────────── Escrow API ──────────────────────────────┐
+  │                                                                        │
+  │  Jobs       Contract       Ledger        Verification       Audit log │
+  │  + state    + handshake    (double-      (deterministic     (every    │
+  │  machine    + policy        entry)        + AI verifier)    state     │
+  │                                                             txn)      │
+  │                                                                        │
+  │  SQLite / Postgres (pluggable via ESCROW_DATABASE_URL)                 │
+  └────────────────────────────────────────────────────────────────────────┘
+        │                                                   │
+        │ 4. /fund   5. /start   6. /submit                 │
+        │◀─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│
+        │ 7. /verify (deterministic gate)                   │
+        │ 8. /verify_ai | /verify_trace  (AI engine)        │
+        │ 9. /settle or /refund                             │
+    </div>
+    <p class="muted">Single FastAPI process. The landing/docs page you're reading is served by the same service at <code>/</code>, API explorer at <code>/docs</code>, raw OpenAPI at <code>/openapi.json</code>.</p>
+  </section>
+
+  <section id="api">
+    <h2>API surface</h2>
+    <table>
+      <thead><tr><th>Method &amp; path</th><th>Purpose</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST /jobs</code></td><td>Create job from task request</td><td>Requester side. Needs <code>Idempotency-Key</code>.</td></tr>
+        <tr><td><code>POST /jobs/{id}/handshake/accept</code></td><td>Doer accepts terms</td><td>Also supports <code>dispute_policy</code>.</td></tr>
+        <tr><td><code>POST /jobs/{id}/handshake/counteroffer</code></td><td>Doer proposes new terms</td><td>Transitions to NEGOTIATED.</td></tr>
+        <tr><td><code>POST /jobs/{id}/fund</code></td><td>Place escrow hold</td><td>Ledger entry created.</td></tr>
+        <tr><td><code>POST /jobs/{id}/start</code></td><td>Issue scoped start token</td><td>Only from FUNDED.</td></tr>
+        <tr><td><code>POST /jobs/{id}/submit</code></td><td>Submit Completion Packet</td><td>Deliverable + evidence.</td></tr>
+        <tr><td><code>POST /jobs/{id}/verify</code></td><td>Deterministic gate</td><td>Applies dispute policy on failure.</td></tr>
+        <tr><td><code>POST /jobs/{id}/settle</code></td><td>Release funds</td><td>Idempotent, audited.</td></tr>
+        <tr><td><code>POST /jobs/{id}/refund</code></td><td>Refund requester</td><td>Terminal.</td></tr>
+        <tr><td><code>GET  /jobs/{id}</code></td><td>Current snapshot</td><td>Status, contract, doer.</td></tr>
+        <tr><td><code>GET  /jobs/{id}/trace</code></td><td>Full Alice&harr;Bob trace</td><td>Spec + contract + audit + deliverable.</td></tr>
+        <tr><td><code>POST /jobs/{id}/verify_ai</code></td><td>AI review of deliverable</td><td>OpenAI or heuristic backend.</td></tr>
+        <tr><td><code>POST /jobs/{id}/verify_trace</code></td><td>AI audit of full lifecycle</td><td>Returns verdict + deterministic snapshot.</td></tr>
+        <tr><td><code>POST /experiments/run</code></td><td>Run HW7 suites 1–5</td><td>Dashboard-friendly.</td></tr>
+        <tr><td><code>GET  /health</code></td><td>Liveness</td><td>Used by Railway healthcheck.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="ai-verifier">
+    <h2>AI Verification Engine</h2>
+    <p>The AI verifier is a <strong>pure auditor</strong> — it never mutates job state. It has two entry points:</p>
+    <ul class="tight">
+      <li><strong><code>review_deliverable</code></strong> — given the job spec and Bob's deliverable (+ evidence), returns <code>{verdict, score, reasoning, issues}</code>.</li>
+      <li><strong><code>review_negotiation_trace</code></strong> — given the job spec, finalized contract, ordered audit log, deliverable, and the deterministic gate's verdict, audits the <em>whole</em> Alice&harr;Bob lifecycle (were states visited? did the dispute policy match the action taken? does the deliverable honor the agreed schema?).</li>
+    </ul>
+    <p>Dual backend:</p>
+    <ul class="tight">
+      <li><strong>OpenAI</strong> — used automatically when <code>OPENAI_API_KEY</code> is set. Model is <code>OPENAI_VERIFIER_MODEL</code> (default <code>gpt-4o-mini</code>), JSON response format, temperature 0.</li>
+      <li><strong>Heuristic</strong> — deterministic Python rules. Same return shape. Used when there's no key, or when you explicitly pass <code>"backend": "heuristic"</code> to keep scale tests cheap.</li>
+    </ul>
+    <p>Example response from <code>POST /jobs/{id}/verify_trace</code> on a refunded job:</p>
+<pre><code>{
+  "verdict": "needs_review",
+  "score": 0.75,
+  "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+  "issues": ["deliverable:missing_required_field:result"],
+  "backend": "heuristic",
+  "deterministic_snapshot": {
+    "verified": false,
+    "error": "Missing required field: result",
+    "action": "refund"
+  }
+}</code></pre>
+  </section>
+
+  <section id="experiments">
+    <h2>Experiments (HW7 &amp; HW8)</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="tag">HW7</div>
+        <h3>Small-scale controlled suites</h3>
+        <p>Five experiments: verification strictness, dispute policy fidelity, sequential vs parallel, failure recovery, and an optional OpenAI "memory A/B" run. <code>experiments/run_agent_experiments.py</code> or <code>POST /experiments/run</code>.</p>
+      </div>
+      <div class="card">
+        <div class="tag">HW8</div>
+        <h3>30+ agents at scale</h3>
+        <p>Multi-instance load test in <code>experiments/scale_experiment.py</code>: N concurrent "cloud instance" simulators (each with its own connection pool). 30&rarr;60&rarr;120 agents produces a flat ~39 jobs/s throughput ceiling — the SQLite single-writer signature.</p>
+      </div>
+    </div>
+<pre><code># HW8 scale sweep (offline-safe heuristic AI verifier on every job)
+python experiments/scale_experiment.py \
+  --base http://localhost:8000 \
+  --agents 30 --instances 3 --bad-rate 0.2 --ai-backend heuristic</code></pre>
+  </section>
+
+  <section>
+    <h2>Limitations &amp; roadmap</h2>
+    <ul class="tight">
+      <li><strong>SQLite single-writer</strong> is the throughput ceiling (~40 jobs/s on one node). Postgres + connection pool is the first production move.</li>
+      <li><strong>Payments are mocked.</strong> The ledger records entries but doesn't touch a real PSP. The payments adapter is the integration point.</li>
+      <li><strong>No auth in v0.</strong> Every mutating endpoint requires an <code>Idempotency-Key</code> header, but caller identity is trusted. Production deployments should put this behind an API gateway / mTLS.</li>
+      <li><strong>AI verifier is advisory.</strong> The deterministic gate remains the only thing that moves funds. The AI verdict is audit evidence, not a money mover.</li>
+      <li><strong>No UI shipped in the hosted deploy.</strong> The React UI in <code>ui/</code> runs locally with <code>npm run dev</code>; hosting it is optional.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Project layout</h2>
+<pre><code>src/escrow/
+  ai_verification.py       # HW8: AIVerifier (OpenAI + heuristic)
+  api/
+    jobs.py                # create, handshake, get
+    fund.py start.py submit.py settle.py
+    verification_ai.py     # HW8: /trace, /verify_ai, /verify_trace
+    experiments_dashboard.py
+    metrics_endpoint.py
+  schemas/                 # job spec, contract, completion packet, ledger
+  state.py                 # lifecycle state machine
+  tokens.py verification.py ledger_service.py audit.py metrics.py repository.py
+experiments/
+  run_agent_experiments.py # HW7: suites 1-5
+  scale_experiment.py      # HW8: 30+ agents
+  llm_escrow_agent.py      # OpenAI-backed doer agent (exp5)
+  EXPERIMENT_SUMMARY.md    # HW7 one-pager
+  EXPERIMENT_SUMMARY_HW8.md
+  VIDEO_ONE_MINUTE_SCRIPT*.md
+docs/
+  WHITEPAPER.md
+  PEER_FEEDBACK_TEMPLATE.md
+  LAUNCH_POSTS.md
+main.py                    # FastAPI app + static site
+Dockerfile  Procfile  railway.json</code></pre>
+  </section>
+
+</main>
+
+<footer>
+  Agent Escrow · MIT License · built for the "AI for impact" course · 
+  <a href="/docs">Swagger</a> · <a href="/openapi.json">OpenAPI JSON</a> · <a href="/health">/health</a>
+</footer>
+
+</body>
+</html>

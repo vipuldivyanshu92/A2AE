@@ -1,0 +1,1833 @@
+{
+  "started_at": "2026-04-22T23:44:36",
+  "ended_at": "2026-04-22T23:44:36",
+  "base_url": "http://127.0.0.1:8765",
+  "total_agents": 30,
+  "instances": 3,
+  "bad_rate": 0.2,
+  "ai_backend": "heuristic",
+  "ai_sample_rate": 1.0,
+  "wall_s": 0.788,
+  "throughput_jobs_per_s": 38.05,
+  "counts": {
+    "settled": 22,
+    "refunded": 8,
+    "verify_failed": 0,
+    "http_error": 0,
+    "exception": 0,
+    "total": 30
+  },
+  "lifecycle_latency_s": {
+    "count": 30,
+    "mean": 0.4762,
+    "p50": 0.4836,
+    "p95": 0.7157,
+    "p99": 0.7261,
+    "max": 0.7261
+  },
+  "ai_deliverable_latency_s": {
+    "count": 30,
+    "mean": 0.0064,
+    "p50": 0.0028,
+    "p95": 0.0161,
+    "p99": 0.0252,
+    "max": 0.0252
+  },
+  "ai_trace_latency_s": {
+    "count": 30,
+    "mean": 0.0049,
+    "p50": 0.0043,
+    "p95": 0.0114,
+    "p99": 0.0152,
+    "max": 0.0152
+  },
+  "http_error_breakdown": {},
+  "exception_breakdown": {},
+  "per_instance": [
+    {
+      "label": "scale-inst-1",
+      "agents": 10,
+      "settled": 8,
+      "refunded": 2,
+      "verify_failed": 0,
+      "http_errors": 0,
+      "exceptions": 0,
+      "wall_s": 0.7774,
+      "throughput_jobs_per_s": 12.86
+    },
+    {
+      "label": "scale-inst-2",
+      "agents": 10,
+      "settled": 7,
+      "refunded": 3,
+      "verify_failed": 0,
+      "http_errors": 0,
+      "exceptions": 0,
+      "wall_s": 0.7121,
+      "throughput_jobs_per_s": 14.04
+    },
+    {
+      "label": "scale-inst-3",
+      "agents": 10,
+      "settled": 7,
+      "refunded": 3,
+      "verify_failed": 0,
+      "http_errors": 0,
+      "exceptions": 0,
+      "wall_s": 0.7879,
+      "throughput_jobs_per_s": 12.69
+    }
+  ],
+  "results": [
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0026",
+      "job_id": "488ac130-047f-413d-ba2f-306f89e9f257",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.2336,
+      "ai_deliverable": {
+        "job_id": "488ac130-047f-413d-ba2f-306f89e9f257",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0077,
+      "ai_trace": {
+        "job_id": "488ac130-047f-413d-ba2f-306f89e9f257",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0034,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0020",
+      "job_id": "77826080-69aa-4ca4-b3fe-01e914d92c78",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.2731,
+      "ai_deliverable": {
+        "job_id": "77826080-69aa-4ca4-b3fe-01e914d92c78",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0024,
+      "ai_trace": {
+        "job_id": "77826080-69aa-4ca4-b3fe-01e914d92c78",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0018,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0029",
+      "job_id": "3fa0a7b1-6eb9-4742-b501-7a8d6d49cde2",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.4195,
+      "ai_deliverable": {
+        "job_id": "3fa0a7b1-6eb9-4742-b501-7a8d6d49cde2",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0061,
+      "ai_trace": {
+        "job_id": "3fa0a7b1-6eb9-4742-b501-7a8d6d49cde2",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0019,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0017",
+      "job_id": "fabb82dc-4ed5-4993-86cf-a4b4201fa6b6",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.4894,
+      "ai_deliverable": {
+        "job_id": "fabb82dc-4ed5-4993-86cf-a4b4201fa6b6",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0031,
+      "ai_trace": {
+        "job_id": "fabb82dc-4ed5-4993-86cf-a4b4201fa6b6",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0046,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0005",
+      "job_id": "17060a4a-4863-455b-ac32-1e6d09cab944",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.5039,
+      "ai_deliverable": {
+        "job_id": "17060a4a-4863-455b-ac32-1e6d09cab944",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.002,
+      "ai_trace": {
+        "job_id": "17060a4a-4863-455b-ac32-1e6d09cab944",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0063,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0023",
+      "job_id": "b5d31cc8-27e2-4202-b037-648bf39bdf6b",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.5212,
+      "ai_deliverable": {
+        "job_id": "b5d31cc8-27e2-4202-b037-648bf39bdf6b",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0022,
+      "ai_trace": {
+        "job_id": "b5d31cc8-27e2-4202-b037-648bf39bdf6b",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0019,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0014",
+      "job_id": "ddf18c3d-8630-4132-84cc-36d7fdf27c37",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.5475,
+      "ai_deliverable": {
+        "job_id": "ddf18c3d-8630-4132-84cc-36d7fdf27c37",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0016,
+      "ai_trace": {
+        "job_id": "ddf18c3d-8630-4132-84cc-36d7fdf27c37",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0067,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0008",
+      "job_id": "67396c0b-9a01-4e9f-8db5-348843896747",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.5964,
+      "ai_deliverable": {
+        "job_id": "67396c0b-9a01-4e9f-8db5-348843896747",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0016,
+      "ai_trace": {
+        "job_id": "67396c0b-9a01-4e9f-8db5-348843896747",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0092,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0011",
+      "job_id": "32271fd4-7ea5-4aa7-9b21-ccfc5cb33498",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.6051,
+      "ai_deliverable": {
+        "job_id": "32271fd4-7ea5-4aa7-9b21-ccfc5cb33498",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0064,
+      "ai_trace": {
+        "job_id": "32271fd4-7ea5-4aa7-9b21-ccfc5cb33498",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0064,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-2",
+      "agent_id": "doer-scale-inst-2-0002",
+      "job_id": "5cdebb0d-c108-40be-8046-41dab1ba6a85",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.6413,
+      "ai_deliverable": {
+        "job_id": "5cdebb0d-c108-40be-8046-41dab1ba6a85",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0016,
+      "ai_trace": {
+        "job_id": "5cdebb0d-c108-40be-8046-41dab1ba6a85",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0152,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0007",
+      "job_id": "f39b0f6f-c0ee-49b6-bcf5-4d8da2a2db88",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.2435,
+      "ai_deliverable": {
+        "job_id": "f39b0f6f-c0ee-49b6-bcf5-4d8da2a2db88",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.009,
+      "ai_trace": {
+        "job_id": "f39b0f6f-c0ee-49b6-bcf5-4d8da2a2db88",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0084,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0013",
+      "job_id": "d0673e1f-e598-48b9-8e98-97ba89ab17c3",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.377,
+      "ai_deliverable": {
+        "job_id": "d0673e1f-e598-48b9-8e98-97ba89ab17c3",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.005,
+      "ai_trace": {
+        "job_id": "d0673e1f-e598-48b9-8e98-97ba89ab17c3",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0061,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0019",
+      "job_id": "6c52d6bb-d627-400b-a9d0-e6ab66dc1ba2",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.3718,
+      "ai_deliverable": {
+        "job_id": "6c52d6bb-d627-400b-a9d0-e6ab66dc1ba2",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0252,
+      "ai_trace": {
+        "job_id": "6c52d6bb-d627-400b-a9d0-e6ab66dc1ba2",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0073,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0004",
+      "job_id": "07f59452-135f-4e58-abaf-b46e16159f46",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.4303,
+      "ai_deliverable": {
+        "job_id": "07f59452-135f-4e58-abaf-b46e16159f46",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0016,
+      "ai_trace": {
+        "job_id": "07f59452-135f-4e58-abaf-b46e16159f46",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.002,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0025",
+      "job_id": "42ce6003-a65a-4b9e-a80d-fc6cc61f61bf",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.4336,
+      "ai_deliverable": {
+        "job_id": "42ce6003-a65a-4b9e-a80d-fc6cc61f61bf",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0018,
+      "ai_trace": {
+        "job_id": "42ce6003-a65a-4b9e-a80d-fc6cc61f61bf",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0114,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0010",
+      "job_id": "d14a50d5-ec77-43c8-b035-765eed08bdb5",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.4778,
+      "ai_deliverable": {
+        "job_id": "d14a50d5-ec77-43c8-b035-765eed08bdb5",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0025,
+      "ai_trace": {
+        "job_id": "d14a50d5-ec77-43c8-b035-765eed08bdb5",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0039,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0022",
+      "job_id": "4bc47e98-2aed-43a7-be8b-ffc8d0ce35d6",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.5305,
+      "ai_deliverable": {
+        "job_id": "4bc47e98-2aed-43a7-be8b-ffc8d0ce35d6",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0018,
+      "ai_trace": {
+        "job_id": "4bc47e98-2aed-43a7-be8b-ffc8d0ce35d6",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0057,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0028",
+      "job_id": "2d0626e0-908e-4c33-b89b-a866d05da83d",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.5677,
+      "ai_deliverable": {
+        "job_id": "2d0626e0-908e-4c33-b89b-a866d05da83d",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.012,
+      "ai_trace": {
+        "job_id": "2d0626e0-908e-4c33-b89b-a866d05da83d",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0031,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0001",
+      "job_id": "e0e9438b-6f5c-4cdb-af38-447d54d0a171",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.6706,
+      "ai_deliverable": {
+        "job_id": "e0e9438b-6f5c-4cdb-af38-447d54d0a171",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0124,
+      "ai_trace": {
+        "job_id": "e0e9438b-6f5c-4cdb-af38-447d54d0a171",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0072,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-1",
+      "agent_id": "doer-scale-inst-1-0016",
+      "job_id": "60db7566-b626-4b72-9580-0fb2c94bb8ba",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.7157,
+      "ai_deliverable": {
+        "job_id": "60db7566-b626-4b72-9580-0fb2c94bb8ba",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0021,
+      "ai_trace": {
+        "job_id": "60db7566-b626-4b72-9580-0fb2c94bb8ba",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0022,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0021",
+      "job_id": "b752752e-a2a9-4492-8c13-3de5a2ceafe9",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.2176,
+      "ai_deliverable": {
+        "job_id": "b752752e-a2a9-4492-8c13-3de5a2ceafe9",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0151,
+      "ai_trace": {
+        "job_id": "b752752e-a2a9-4492-8c13-3de5a2ceafe9",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0028,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0015",
+      "job_id": "71e093c2-a70b-4f48-9506-c13c1066dc3e",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.2855,
+      "ai_deliverable": {
+        "job_id": "71e093c2-a70b-4f48-9506-c13c1066dc3e",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0024,
+      "ai_trace": {
+        "job_id": "71e093c2-a70b-4f48-9506-c13c1066dc3e",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0019,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0018",
+      "job_id": "aae9091b-58f8-4ed0-801f-bb75245fd851",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.3122,
+      "ai_deliverable": {
+        "job_id": "aae9091b-58f8-4ed0-801f-bb75245fd851",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0091,
+      "ai_trace": {
+        "job_id": "aae9091b-58f8-4ed0-801f-bb75245fd851",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.006,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0006",
+      "job_id": "30798203-f0c7-4d73-8b16-78b8dbca34c4",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.3323,
+      "ai_deliverable": {
+        "job_id": "30798203-f0c7-4d73-8b16-78b8dbca34c4",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.012,
+      "ai_trace": {
+        "job_id": "30798203-f0c7-4d73-8b16-78b8dbca34c4",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0032,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0009",
+      "job_id": "5db4b1f2-3cd9-45c9-a023-c48fa070c892",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.4356,
+      "ai_deliverable": {
+        "job_id": "5db4b1f2-3cd9-45c9-a023-c48fa070c892",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0161,
+      "ai_trace": {
+        "job_id": "5db4b1f2-3cd9-45c9-a023-c48fa070c892",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0027,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0024",
+      "job_id": "b2fc7393-ffb6-412e-bcf8-7312bb444bb1",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.4728,
+      "ai_deliverable": {
+        "job_id": "b2fc7393-ffb6-412e-bcf8-7312bb444bb1",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0159,
+      "ai_trace": {
+        "job_id": "b2fc7393-ffb6-412e-bcf8-7312bb444bb1",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0046,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0003",
+      "job_id": "598f4c54-9f1f-4c8a-a5f8-31553d471ccb",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.4957,
+      "ai_deliverable": {
+        "job_id": "598f4c54-9f1f-4c8a-a5f8-31553d471ccb",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0086,
+      "ai_trace": {
+        "job_id": "598f4c54-9f1f-4c8a-a5f8-31553d471ccb",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0061,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0012",
+      "job_id": "e4e0c058-67f2-4a79-a386-5a2dba7fab6a",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.6771,
+      "ai_deliverable": {
+        "job_id": "e4e0c058-67f2-4a79-a386-5a2dba7fab6a",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0023,
+      "ai_trace": {
+        "job_id": "e4e0c058-67f2-4a79-a386-5a2dba7fab6a",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0026,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0030",
+      "job_id": "71f5053d-b400-4c5a-8b22-973ea085a1f0",
+      "outcome": "refunded",
+      "verify_passed": false,
+      "verify_action": "refund",
+      "settled": false,
+      "refunded": true,
+      "lifecycle_s": 0.683,
+      "ai_deliverable": {
+        "job_id": "71f5053d-b400-4c5a-8b22-973ea085a1f0",
+        "kind": "deliverable_review",
+        "verdict": "reject",
+        "score": 0.6,
+        "reasoning": "Deliverable violates required schema or is empty.",
+        "issues": [
+          "missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0019,
+      "ai_trace": {
+        "job_id": "71f5053d-b400-4c5a-8b22-973ea085a1f0",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": false,
+          "error": "Missing required field: result",
+          "action": "refund"
+        },
+        "verdict": "needs_review",
+        "score": 0.75,
+        "reasoning": "Trace is mostly consistent but has minor issues worth a human spot-check.",
+        "issues": [
+          "deliverable:missing_required_field:result"
+        ],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "refunded",
+            "submitted"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0016,
+      "http_status": 200,
+      "error": null
+    },
+    {
+      "instance_label": "scale-inst-3",
+      "agent_id": "doer-scale-inst-3-0027",
+      "job_id": "223381db-b108-4244-8146-a7e043b9058f",
+      "outcome": "settled",
+      "verify_passed": true,
+      "verify_action": null,
+      "settled": true,
+      "refunded": false,
+      "lifecycle_s": 0.7261,
+      "ai_deliverable": {
+        "job_id": "223381db-b108-4244-8146-a7e043b9058f",
+        "kind": "deliverable_review",
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Deliverable satisfies required schema keys and is non-trivial.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {}
+      },
+      "ai_deliverable_s": 0.0016,
+      "ai_trace": {
+        "job_id": "223381db-b108-4244-8146-a7e043b9058f",
+        "kind": "trace_review",
+        "deterministic_snapshot": {
+          "verified": true
+        },
+        "verdict": "accept",
+        "score": 1.0,
+        "reasoning": "Full lifecycle honored: negotiation, funding, execution, submit, and policy all consistent.",
+        "issues": [],
+        "backend": "heuristic",
+        "latency_s": 0.0,
+        "extra": {
+          "seen_states": [
+            "created",
+            "funded",
+            "in_progress",
+            "negotiated",
+            "settled",
+            "submitted",
+            "verified"
+          ],
+          "expected_flow": [
+            "created",
+            "negotiated",
+            "funded",
+            "in_progress",
+            "submitted"
+          ]
+        }
+      },
+      "ai_trace_s": 0.0016,
+      "http_status": 200,
+      "error": null
+    }
+  ]
+}
