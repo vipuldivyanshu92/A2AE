@@ -196,11 +196,23 @@ The current production deployment lives at <https://a2ae-production.up.railway.a
 
 Railway exposes exactly one TCP port per service via `$PORT`. Common deploy mistakes (running uvicorn on a hard-coded port, running a separate frontend process, or having Swagger on a different port than the static site) all fail Railway's healthcheck. This repo avoids those by:
 
-- binding `uvicorn` once to `${PORT:-8000}` (Dockerfile `CMD`, `Procfile`, and `railway.json startCommand` all agree),
+- binding `uvicorn` once to `${PORT:-8000}` from the **Dockerfile `CMD`** (the single source of truth for the start command),
 - mounting the static site (`site/`) inside the same FastAPI app (`StaticFiles`),
 - letting FastAPI's built-in `/docs` and `/openapi.json` ride on the same router.
 
 The included pytest suite asserts that `/`, `/health`, `/docs`, `/openapi.json`, every `/site/*.html` page, and the `/agents` + `/jobs` JSON endpoints are all reachable on the same client.
+
+### Deploy gotcha: do NOT put `startCommand` in `railway.json`
+
+Railway invokes `startCommand` argv-style (no shell). If you write
+`"startCommand": "uvicorn main:app --port ${PORT:-8000}"` in `railway.json`,
+the literal string `${PORT:-8000}` is passed to uvicorn and you'll see:
+
+```
+Error: Invalid value for '--port': '${PORT:-8000}' is not a valid integer.
+```
+
+The Dockerfile's `CMD` already runs through `sh -c` and expands `$PORT` correctly. Leave `railway.json` without a `startCommand` so the Dockerfile's `CMD` wins. (`tests/test_smoke.py::test_railway_json_uses_dockerfile_and_health_check` pins this.)
    - `ESCROW_DATABASE_URL` — override the DB (e.g. point at Railway's managed Postgres: `postgresql+psycopg2://...`).
 6. **Deploy.** Railway assigns a public URL; the landing page is at `/`, API explorer at `/docs`.
 

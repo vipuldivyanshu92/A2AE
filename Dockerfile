@@ -25,5 +25,13 @@ COPY site ./site
 # uvicorn process to that port; this same process serves the API,
 # Swagger, the landing page, and the hosted UI (`/site/...`). No
 # separate frontend service is needed.
+#
+# IMPORTANT: this CMD MUST run through `sh -c` so the shell expands
+# ${PORT:-8000}. Railway invokes a `startCommand` argv-style (no shell),
+# so any `--port ${PORT}` passed via railway.json or a raw exec form
+# would reach uvicorn as a literal string and fail with
+# "Invalid value for '--port': '${PORT:-8000}' is not a valid integer".
+# Keeping the start command here means there's exactly one source of
+# truth and shell expansion is guaranteed.
 EXPOSE 8000
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]

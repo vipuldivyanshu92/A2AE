@@ -44,15 +44,36 @@ def test_single_origin_deploy_everything_on_one_port(client) -> None:
         assert r.status_code == 200, f"{path} -> {r.status_code}"
 
 
-def test_railway_json_uses_dollar_port_and_health_check() -> None:
-    """The deploy config must bind to $PORT and healthcheck /health."""
+def test_railway_json_uses_dockerfile_and_health_check() -> None:
+    """The deploy config must use the Dockerfile builder and pin /health.
+
+    `startCommand` is intentionally NOT set in railway.json: Railway
+    invokes it argv-style (no shell), so `--port ${PORT}` would reach
+    uvicorn as a literal string. The Dockerfile CMD runs through
+    `sh -c` and is the single source of truth for the start command.
+    """
     import json
     from pathlib import Path
 
     cfg = json.loads((Path(__file__).resolve().parent.parent / "railway.json").read_text())
     assert cfg["build"]["builder"] == "DOCKERFILE"
-    assert "${PORT" in cfg["deploy"]["startCommand"]
     assert cfg["deploy"]["healthcheckPath"] == "/health"
+    # Guard the regression: do not put startCommand back in railway.json
+    # without wrapping it in `sh -c '...'` (and even then, prefer the
+    # Dockerfile CMD).
+    assert "startCommand" not in cfg["deploy"]
+
+
+def test_dockerfile_cmd_uses_sh_c_for_port_expansion() -> None:
+    """Dockerfile CMD must expand $PORT through a shell."""
+    from pathlib import Path
+
+    df = (Path(__file__).resolve().parent.parent / "Dockerfile").read_text()
+    cmd_lines = [line for line in df.splitlines() if line.strip().startswith("CMD ")]
+    assert cmd_lines, "Dockerfile is missing a CMD line"
+    cmd = cmd_lines[-1]
+    assert '"sh"' in cmd and '"-c"' in cmd, f"CMD must run through sh -c, got: {cmd}"
+    assert "${PORT" in cmd, f"CMD must reference $PORT, got: {cmd}"
 
 
 def test_openapi_lists_new_routes(client) -> None:
