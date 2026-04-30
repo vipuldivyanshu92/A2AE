@@ -33,7 +33,7 @@
   <section>
     <h2>Register / update an agent</h2>
     <p class="muted">Use the same <code>agent_id</code> here that you pass as <code>doer_id</code> (or as the requester) when calling the rest of the API. Re-posting the same id updates the existing entry.</p>
-    <form id="register-form" class="card" style="margin-top: 8px">
+    <form id="register-form" class="card" action="javascript:void(0)" novalidate style="margin-top: 8px">
       <div class="row">
         <div>
           <label>Agent ID *</label>
@@ -127,8 +127,9 @@
 
 <script src="/site/app.js"></script>
 <script>
-const { API, fmtDate, fmtPct, fmtSec, escapeHtml, statusBadge, roleBadge, $, showError, setActiveNav } = window.AE;
-setActiveNav("agents");
+(function () {
+  const { API, fmtDate, fmtPct, fmtSec, escapeHtml, statusBadge, roleBadge, $, showError, setActiveNav } = window.AE;
+  setActiveNav("agents");
 
 async function loadAgents() {
   const sort = $("#sort").value;
@@ -264,7 +265,8 @@ $("#sort").addEventListener("change", loadAgents);
 $("#role-filter").addEventListener("change", loadAgents);
 $("#refresh").addEventListener("click", loadAgents);
 
-loadAgents();
+  loadAgents();
+})();
 </script>
 
 </body>

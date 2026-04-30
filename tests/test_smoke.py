@@ -22,6 +22,51 @@ def test_static_site_assets_are_served(client) -> None:
         assert r.status_code == 200, f"{path} -> {r.status_code}"
 
 
+def test_app_js_is_iife_wrapped_so_globals_dont_collide(client) -> None:
+    """Regression guard: app.js MUST be wrapped in an IIFE so it doesn't
+    declare top-level `const`s in the global script scope. Without this,
+    the per-page inline `<script>` blocks that destructure window.AE
+    (e.g. `const { API } = window.AE`) throw
+    `Identifier 'API' has already been declared` and the form falls back
+    to a default GET submit, putting user input in the URL."""
+    src = client.get("/site/app.js").text
+    assert src.lstrip().startswith("/*") or src.lstrip().startswith("(function") or "(function ()" in src, src[:200]
+    assert "})();" in src or "}());" in src, "app.js IIFE must be closed"
+    assert "window.AE" in src, "app.js must export window.AE"
+
+
+def test_inline_scripts_are_iife_wrapped(client) -> None:
+    """The per-page inline scripts also wrap themselves in an IIFE so
+    each page's local names don't bleed into other pages or get
+    redeclared if a script is included twice."""
+    for path in ("/site/agents.html", "/site/jobs.html", "/site/run.html"):
+        html = client.get(path).text
+        # Locate the inline script that pulls in window.AE.
+        marker = "window.AE"
+        assert marker in html, f"{path}: missing window.AE usage"
+        # The inline block immediately after `<script src="/site/app.js">` must open with `(function`
+        # and (eventually) close with `})();`.
+        idx = html.find('src="/site/app.js"')
+        tail = html[idx:]
+        assert "(function" in tail[:600], f"{path}: inline script not wrapped in IIFE"
+        assert "})();" in tail, f"{path}: inline IIFE never closed"
+
+
+def test_forms_have_javascript_void_action(client) -> None:
+    """Every <form> in the hosted UI has a defensive `action='javascript:void(0)'`
+    so even if the JS handler errors before `e.preventDefault()` is called,
+    the form can't accidentally GET-submit user input into the URL."""
+    for path in ("/site/agents.html", "/site/run.html"):
+        html = client.get(path).text
+        # Count <form ... > tags and ensure each has the safety action.
+        import re
+
+        forms = re.findall(r"<form\b[^>]*>", html)
+        assert forms, f"{path}: no <form> tags found"
+        for f in forms:
+            assert 'action="javascript:void(0)"' in f, f"{path}: unprotected form: {f}"
+
+
 def test_single_origin_deploy_everything_on_one_port(client) -> None:
     """Railway exposes one $PORT per service. Verify every public surface
     (landing, hosted UI, API, Swagger, OpenAPI, health) responds 200 from

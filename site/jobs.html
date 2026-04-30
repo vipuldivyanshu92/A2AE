@@ -88,8 +88,9 @@
 
 <script src="/site/app.js"></script>
 <script>
-const { API, fmtDate, escapeHtml, statusBadge, $, showError, setActiveNav } = window.AE;
-setActiveNav("jobs");
+(function () {
+  const { API, fmtDate, escapeHtml, statusBadge, $, showError, setActiveNav } = window.AE;
+  setActiveNav("jobs");
 
 let timer = null;
 let paused = false;
@@ -233,8 +234,9 @@ $("#pause").addEventListener("click", () => {
   if (paused) stopTimer(); else startTimer();
 });
 
-loadJobs();
-startTimer();
+  loadJobs();
+  startTimer();
+})();
 </script>
 
 </body>

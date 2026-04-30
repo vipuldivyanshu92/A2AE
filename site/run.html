@@ -34,7 +34,7 @@
         <div class="tag">smoke test</div>
         <h3 style="margin-top:.3rem">Single full lifecycle</h3>
         <p class="muted">Create → handshake → fund → start → submit → verify → settle (or refund), all from the browser. Picks fresh idempotency keys for every call.</p>
-        <form id="quick-form">
+        <form id="quick-form" action="javascript:void(0)" novalidate>
           <div class="row">
             <div>
               <label>Requester (Alice) id</label>
@@ -75,7 +75,7 @@
         <div class="tag">HW7</div>
         <h3 style="margin-top:.3rem">Controlled experiments</h3>
         <p class="muted">Five suites: verification strictness, dispute policy fidelity, parallel/sequential timing, failure recovery, optional LLM memory A/B.</p>
-        <form id="hw7-form">
+        <form id="hw7-form" action="javascript:void(0)" novalidate>
           <div class="row">
             <div>
               <label>Suite</label>
@@ -124,7 +124,7 @@
       <div class="tag">HW8</div>
       <h3 style="margin-top:.3rem">Scale test (≥30 agents, multi-instance)</h3>
       <p class="muted">Drives N parallel HTTP doer agents across M independent connection pools. Returns latency percentiles, throughput, and per-instance breakdown. (Runs as a background task on the server; this UI polls the result.)</p>
-      <form id="hw8-form">
+      <form id="hw8-form" action="javascript:void(0)" novalidate>
         <div class="row">
           <div>
             <label>Agents</label>
@@ -177,8 +177,9 @@
 
 <script src="/site/app.js"></script>
 <script>
-const { API, uuid, escapeHtml, statusBadge, $, setActiveNav } = window.AE;
-setActiveNav("run");
+(function () {
+  const { API, uuid, escapeHtml, statusBadge, $, setActiveNav } = window.AE;
+  setActiveNav("run");
 
 function logTo(host, html) { host.innerHTML = html; }
 function appendLog(host, html) { host.innerHTML += html; }
@@ -378,6 +379,7 @@ function renderScaleReport(r) {
       <details><summary class="muted">Raw JSON</summary><pre class="json-view"><code>${escapeHtml(JSON.stringify(r, null, 2))}</code></pre></details>
     </div>`;
 }
+})();
 </script>
 
 </body>
