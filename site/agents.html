@@ -131,6 +131,22 @@
   const { API, fmtDate, fmtPct, fmtSec, escapeHtml, statusBadge, roleBadge, $, showError, setActiveNav } = window.AE;
   setActiveNav("agents");
 
+  // Defensive: if the URL still carries form data from a previous session
+  // where the form GET-submitted (legacy bug), strip those params now so
+  // bookmarks / browser back stay clean. Only ?api= is allowed through.
+  (function cleanUrl() {
+    const before = location.search;
+    if (!before) return;
+    const params = new URLSearchParams(before);
+    const allowed = new URLSearchParams();
+    for (const k of ["api", "debug"]) {
+      if (params.has(k)) allowed.set(k, params.get(k));
+    }
+    const next = allowed.toString();
+    const url = location.pathname + (next ? `?${next}` : "");
+    if (url !== location.pathname + before) history.replaceState(null, "", url);
+  })();
+
 async function loadAgents() {
   const sort = $("#sort").value;
   const role = $("#role-filter").value;
@@ -139,6 +155,9 @@ async function loadAgents() {
   try {
     const url = `/agents?sort=${encodeURIComponent(sort)}` + (role ? `&role=${role}` : "");
     const rows = await API.get(url);
+    // Log exactly what the API returned. If the on-page table ever shows a
+    // different count from this, the bug is in render not fetch.
+    console.log(`[agents] GET ${url} -> ${rows.length} rows`, rows.map(r => r.agent_id));
     $("#count").textContent = rows.length;
     if (!rows.length) {
       tbody.innerHTML = `<tr><td colspan="9" class="empty">No agents yet. Register the first one above, or run <code>python seed.py</code> on the server.</td></tr>`;

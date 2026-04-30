@@ -72,17 +72,43 @@ app.include_router(experiments_router)
 
 
 # --- Public site -----------------------------------------------------------
+# StaticFiles is mounted with custom headers so HTML is never cached
+# (a redeploy must be visible on the next refresh) while CSS/JS files
+# get a short cache so re-renders don't refetch them on every click.
 _SITE_DIR = Path(__file__).resolve().parent / "site"
+
+
+class _NoCacheStaticFiles(StaticFiles):
+    """StaticFiles subclass that forces no-store on .html and short max-age on assets.
+
+    Browsers (Chrome especially) will heuristically cache HTML for ~10 minutes
+    when no Cache-Control is set, which means a redeploy can leave users on a
+    stale agents.html / app.js and produce confusing "the API returns 2 but the
+    UI shows 1" symptoms when the cached JS is one version behind. Returning
+    explicit headers eliminates that whole class of bug.
+    """
+
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        if path.endswith(".html"):
+            response.headers["Cache-Control"] = "no-store, max-age=0"
+        elif path.endswith((".js", ".css")):
+            # Short, revalidating cache — fast UI, but a redeploy is picked up
+            # within a minute even without a hard refresh.
+            response.headers["Cache-Control"] = "public, max-age=60, must-revalidate"
+        return response
+
+
 if _SITE_DIR.is_dir():
-    app.mount("/site", StaticFiles(directory=_SITE_DIR, html=True), name="site")
+    app.mount("/site", _NoCacheStaticFiles(directory=_SITE_DIR, html=True), name="site")
 
 
 @app.get("/", include_in_schema=False)
 def root() -> Response:
-    """Serve the landing / docs page at the root."""
+    """Serve the landing / docs page at the root with no-store caching."""
     index = _SITE_DIR / "index.html"
     if index.is_file():
-        return FileResponse(index)
+        return FileResponse(index, headers={"Cache-Control": "no-store, max-age=0"})
     return JSONResponse(
         {
             "name": "Agent Escrow",

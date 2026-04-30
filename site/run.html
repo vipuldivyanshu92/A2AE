@@ -181,6 +181,19 @@
   const { API, uuid, escapeHtml, statusBadge, $, setActiveNav } = window.AE;
   setActiveNav("run");
 
+  (function cleanUrl() {
+    const before = location.search;
+    if (!before) return;
+    const params = new URLSearchParams(before);
+    const allowed = new URLSearchParams();
+    for (const k of ["api", "debug"]) {
+      if (params.has(k)) allowed.set(k, params.get(k));
+    }
+    const next = allowed.toString();
+    const url = location.pathname + (next ? `?${next}` : "");
+    if (url !== location.pathname + before) history.replaceState(null, "", url);
+  })();
+
 function logTo(host, html) { host.innerHTML = html; }
 function appendLog(host, html) { host.innerHTML += html; }
 

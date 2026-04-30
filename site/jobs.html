@@ -92,6 +92,19 @@
   const { API, fmtDate, escapeHtml, statusBadge, $, showError, setActiveNav } = window.AE;
   setActiveNav("jobs");
 
+  (function cleanUrl() {
+    const before = location.search;
+    if (!before) return;
+    const params = new URLSearchParams(before);
+    const allowed = new URLSearchParams();
+    for (const k of ["api", "debug"]) {
+      if (params.has(k)) allowed.set(k, params.get(k));
+    }
+    const next = allowed.toString();
+    const url = location.pathname + (next ? `?${next}` : "");
+    if (url !== location.pathname + before) history.replaceState(null, "", url);
+  })();
+
 let timer = null;
 let paused = false;
 const REFRESH_MS = 3000;

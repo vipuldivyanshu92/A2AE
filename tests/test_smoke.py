@@ -22,6 +22,41 @@ def test_static_site_assets_are_served(client) -> None:
         assert r.status_code == 200, f"{path} -> {r.status_code}"
 
 
+def test_html_pages_send_no_store_cache_headers(client) -> None:
+    """Regression guard: the hosted UI must NEVER be cached by the browser.
+
+    Without no-store headers, Chrome heuristically caches HTML for ~10 min,
+    so a redeploy can leave users on a stale `agents.html` / `app.js` and
+    produce confusing 'API returns 2 rows but UI shows 1' symptoms when
+    the cached JS is one version behind the cached HTML."""
+    for path in ("/", "/site/agents.html", "/site/jobs.html", "/site/run.html"):
+        r = client.get(path)
+        cc = r.headers.get("cache-control", "")
+        assert "no-store" in cc, f"{path}: missing no-store; got cache-control={cc!r}"
+
+
+def test_static_assets_use_short_revalidating_cache(client) -> None:
+    """JS/CSS must NOT be no-store (we want them cached briefly for perf)
+    but they MUST also revalidate so a redeploy is picked up quickly."""
+    for path in ("/site/app.js", "/site/app.css"):
+        r = client.get(path)
+        cc = r.headers.get("cache-control", "")
+        assert "must-revalidate" in cc, f"{path}: missing must-revalidate; got {cc!r}"
+        assert "max-age=60" in cc, f"{path}: expected short max-age; got {cc!r}"
+
+
+def test_pages_strip_polluted_url_params(client) -> None:
+    """Each hosted UI page must clean form-data query params on load.
+
+    A browser GET-submit (legacy bug) could leave the URL stuck on
+    `?agent_id=...&display_name=...`. The page must self-heal via
+    `history.replaceState` so a refresh shows a clean URL."""
+    for path in ("/site/agents.html", "/site/jobs.html", "/site/run.html"):
+        html = client.get(path).text
+        assert "history.replaceState" in html, f"{path}: missing URL self-clean"
+        assert "cleanUrl" in html, f"{path}: cleanUrl IIFE missing"
+
+
 def test_app_js_is_iife_wrapped_so_globals_dont_collide(client) -> None:
     """Regression guard: app.js MUST be wrapped in an IIFE so it doesn't
     declare top-level `const`s in the global script scope. Without this,
