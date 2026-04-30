@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run tests · Agent Escrow</title>
+  <link rel="stylesheet" href="/site/app.css" />
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand"><a href="/">Agent <span>Escrow</span></a></div>
+    <div class="links">
+      <a href="/" data-nav="home">Home</a>
+      <a href="/site/agents.html" data-nav="agents">Agents</a>
+      <a href="/site/jobs.html" data-nav="jobs">Live jobs</a>
+      <a href="/site/run.html" data-nav="run" class="active">Run tests</a>
+      <a href="/docs">Swagger</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <h1>Run tests</h1>
+  <p class="muted">Drive the API end-to-end from the browser. Useful for first-time setup, smoke testing a fresh deployment, or generating data for the <a href="/site/agents.html">agent registry</a> and <a href="/site/jobs.html">live feed</a>.</p>
+
+  <section style="margin-top: 24px">
+    <div class="grid grid-2">
+
+      <!-- ============== Quick lifecycle ============== -->
+      <div class="card">
+        <div class="tag">smoke test</div>
+        <h3 style="margin-top:.3rem">Single full lifecycle</h3>
+        <p class="muted">Create → handshake → fund → start → submit → verify → settle (or refund), all from the browser. Picks fresh idempotency keys for every call.</p>
+        <form id="quick-form">
+          <div class="row">
+            <div>
+              <label>Requester (Alice) id</label>
+              <input name="requester_id" value="alice-demo" />
+            </div>
+            <div>
+              <label>Doer (Bob) id</label>
+              <input name="doer_id" value="bob-demo" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Dispute policy</label>
+              <select name="policy">
+                <option>refund</option>
+                <option>arbitration</option>
+                <option>retry</option>
+              </select>
+            </div>
+            <div>
+              <label>Deliverable</label>
+              <select name="bad">
+                <option value="false">Good (will settle)</option>
+                <option value="true">Bad (will refund)</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" type="submit">▶ Run lifecycle</button>
+            <button class="btn" type="button" id="run-batch">▶ Run batch (10 jobs, 50% bad)</button>
+          </div>
+        </form>
+        <div id="quick-out" style="margin-top: 8px"></div>
+      </div>
+
+      <!-- ============== HW7 suites ============== -->
+      <div class="card">
+        <div class="tag">HW7</div>
+        <h3 style="margin-top:.3rem">Controlled experiments</h3>
+        <p class="muted">Five suites: verification strictness, dispute policy fidelity, parallel/sequential timing, failure recovery, optional LLM memory A/B.</p>
+        <form id="hw7-form">
+          <div class="row">
+            <div>
+              <label>Suite</label>
+              <select name="only">
+                <option value="all">all</option>
+                <option value="1">1 — verification strictness</option>
+                <option value="2">2 — dispute policy fidelity</option>
+                <option value="3">3 — coordination / latency</option>
+                <option value="4">4 — failure recovery</option>
+                <option value="5">5 — LLM memory A/B</option>
+              </select>
+            </div>
+            <div>
+              <label>Trials</label>
+              <input name="trials" type="number" value="1" min="1" max="10" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Include LLM (exp5)</label>
+              <select name="include_llm">
+                <option value="false" selected>no</option>
+                <option value="true">yes (needs OPENAI_API_KEY)</option>
+              </select>
+            </div>
+            <div>
+              <label>Dry run</label>
+              <select name="dry_run">
+                <option value="false" selected>no</option>
+                <option value="true">yes (no HTTP)</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" type="submit">▶ Run HW7 suite</button>
+          </div>
+        </form>
+        <div id="hw7-out" style="margin-top: 8px"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <div class="tag">HW8</div>
+      <h3 style="margin-top:.3rem">Scale test (≥30 agents, multi-instance)</h3>
+      <p class="muted">Drives N parallel HTTP doer agents across M independent connection pools. Returns latency percentiles, throughput, and per-instance breakdown. (Runs as a background task on the server; this UI polls the result.)</p>
+      <form id="hw8-form">
+        <div class="row">
+          <div>
+            <label>Agents</label>
+            <input name="agents" type="number" value="30" min="1" max="500" />
+          </div>
+          <div>
+            <label>Instances</label>
+            <input name="instances" type="number" value="3" min="1" max="32" />
+          </div>
+          <div>
+            <label>Bad-deliverable rate</label>
+            <input name="bad_rate" type="number" value="0.2" min="0" max="1" step="0.05" />
+          </div>
+          <div>
+            <label>Workers / instance</label>
+            <input name="workers_per_instance" type="number" value="0" min="0" max="64" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>AI verifier backend</label>
+            <select name="ai_backend">
+              <option value="heuristic" selected>heuristic (fast, free)</option>
+              <option value="auto">auto (openai if key set)</option>
+              <option value="openai">openai (real LLM, expensive)</option>
+            </select>
+          </div>
+          <div>
+            <label>AI sample rate</label>
+            <input name="ai_sample" type="number" value="1.0" min="0" max="1" step="0.1" />
+          </div>
+          <div>
+            <label>Random seed</label>
+            <input name="seed" type="number" value="17" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" type="submit">▶ Run scale test</button>
+        </div>
+      </form>
+      <div id="hw8-out" style="margin-top: 8px"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Agent Escrow · <a href="/">Home</a> · <a href="/docs">Swagger</a>
+</footer>
+
+<script src="/site/app.js"></script>
+<script>
+const { API, uuid, escapeHtml, statusBadge, $, setActiveNav } = window.AE;
+setActiveNav("run");
+
+function logTo(host, html) { host.innerHTML = html; }
+function appendLog(host, html) { host.innerHTML += html; }
+
+async function ensureAgent(id, name, role) {
+  try {
+    await API.post("/agents", {
+      agent_id: id, display_name: name, role,
+      description: "Auto-registered by browser test runner.",
+    });
+  } catch (e) { /* non-fatal */ }
+}
+
+async function runLifecycle({ requester_id, doer_id, policy, bad }) {
+  const log = [];
+  const note = (s) => log.push(s);
+  await ensureAgent(requester_id, requester_id, "requester");
+  await ensureAgent(doer_id, doer_id, "doer");
+
+  const spec = {
+    max_budget: "100",
+    output_schema: { type: "json-schema", definition: { required: ["result"] } },
+    task_description: `${requester_id}->${doer_id} via UI`,
+    callback_url: null,
+    requester_id,
+  };
+  const created = await API.post("/jobs", spec, { idempotency: uuid() });
+  const job_id = created.job_id;
+  note(`✓ created job ${job_id.slice(0, 8)}…`);
+
+  await API.post(`/jobs/${job_id}/handshake/accept`, { doer_id, dispute_policy: policy }, { idempotency: uuid() });
+  note(`✓ handshake accepted (policy=${policy})`);
+  await API.post(`/jobs/${job_id}/fund`, undefined, { idempotency: uuid() });
+  note("✓ funded");
+  await API.post(`/jobs/${job_id}/start`, undefined);
+  note("✓ started");
+
+  const deliverable = bad ? { answer: "wrong-shape" } : { result: `ok from ${doer_id}` };
+  await API.post(
+    `/jobs/${job_id}/submit`,
+    { deliverable: { content: deliverable, mime_type: "application/json" }, evidence: [] },
+    { idempotency: uuid() }
+  );
+  note("✓ submitted");
+
+  const v = await API.post(`/jobs/${job_id}/verify`, undefined);
+  note(`✓ verify: ${JSON.stringify(v)}`);
+
+  if (v.verified) {
+    await API.post(`/jobs/${job_id}/settle`, undefined, { idempotency: uuid() });
+    note("✓ settled");
+  } else {
+    await API.post(`/jobs/${job_id}/refund`, undefined, { idempotency: uuid() });
+    note("✓ refunded");
+  }
+
+  const ai = await API.post(`/jobs/${job_id}/verify_trace`, { backend: "auto" });
+  note(`✓ AI trace: verdict=${ai.verdict} score=${ai.score} backend=${ai.backend}`);
+  return { job_id, log };
+}
+
+$("#quick-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = Object.fromEntries(new FormData(e.currentTarget).entries());
+  const out = $("#quick-out");
+  logTo(out, `<div class="muted">Running…</div>`);
+  try {
+    const r = await runLifecycle({
+      requester_id: form.requester_id.trim(),
+      doer_id: form.doer_id.trim(),
+      policy: form.policy,
+      bad: form.bad === "true",
+    });
+    out.innerHTML = `
+      <div class="card">
+        <div class="tag">result</div>
+        <p style="margin:.3rem 0 .5rem">Job <code><a href="/site/jobs.html">${escapeHtml(r.job_id)}</a></code> &mdash; open the <a href="/site/jobs.html">Live jobs</a> page to inspect.</p>
+        <pre><code>${escapeHtml(r.log.join("\n"))}</code></pre>
+      </div>`;
+  } catch (err) { out.innerHTML = `<div class="empty" style="color:var(--bad)">${escapeHtml(err.message)}</div>`; }
+});
+
+$("#run-batch").addEventListener("click", async () => {
+  const form = Object.fromEntries(new FormData($("#quick-form")).entries());
+  const out = $("#quick-out");
+  logTo(out, `<div class="muted">Running 10 jobs in parallel…</div>`);
+  try {
+    const tasks = Array.from({ length: 10 }, (_, i) => runLifecycle({
+      requester_id: `alice-batch-${i % 3 + 1}`,
+      doer_id: `bob-batch-${i % 4 + 1}`,
+      policy: form.policy,
+      bad: i < 5,
+    }));
+    const results = await Promise.allSettled(tasks);
+    const ok = results.filter(r => r.status === "fulfilled").length;
+    out.innerHTML = `<div class="card"><div class="tag">batch</div><p>${ok}/${results.length} jobs completed. Open <a href="/site/jobs.html">Live jobs</a> to see them.</p></div>`;
+  } catch (err) { out.innerHTML = `<div class="empty" style="color:var(--bad)">${escapeHtml(err.message)}</div>`; }
+});
+
+$("#hw7-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = Object.fromEntries(new FormData(e.currentTarget).entries());
+  const out = $("#hw7-out");
+  logTo(out, `<div class="muted">Running HW7 suite ${form.only}…</div>`);
+  try {
+    const body = {
+      only: form.only,
+      trials: parseInt(form.trials, 10),
+      include_llm: form.include_llm === "true",
+      dry_run: form.dry_run === "true",
+      instance_label: "browser",
+    };
+    const r = await API.post("/experiments/run", body);
+    const summary = summarizeHw7(r);
+    out.innerHTML = `
+      <div class="card">
+        <div class="tag">hw7 result</div>
+        ${summary}
+        <details style="margin-top:8px"><summary class="muted">Raw JSON</summary><pre class="json-view"><code>${escapeHtml(JSON.stringify(r, null, 2))}</code></pre></details>
+      </div>`;
+  } catch (err) { out.innerHTML = `<div class="empty" style="color:var(--bad)">${escapeHtml(err.message)}</div>`; }
+});
+
+function summarizeHw7(r) {
+  const ex = r.experiments || {};
+  const parts = [];
+  if (Array.isArray(ex.exp1_verification_strictness)) {
+    const ok = ex.exp1_verification_strictness.filter(x => x.ok).length;
+    parts.push(`<div><strong>exp1</strong> verification strictness: ${ok}/${ex.exp1_verification_strictness.length} ok</div>`);
+  }
+  if (Array.isArray(ex.exp2_dispute_policy)) {
+    const ok = ex.exp2_dispute_policy.filter(x => x.ok).length;
+    parts.push(`<div><strong>exp2</strong> dispute policy: ${ok}/${ex.exp2_dispute_policy.length} ok</div>`);
+  }
+  if (ex.exp3_coordination_latency) {
+    const e = ex.exp3_coordination_latency;
+    parts.push(`<div><strong>exp3</strong> coordination: seq ${e.sequential_wall_s}s, par ${e.parallel_wall_s}s, speedup ${e.speedup}×</div>`);
+  }
+  if (ex.exp4_failure_recovery) {
+    parts.push(`<div><strong>exp4</strong> failure recovery: ${ex.exp4_failure_recovery.ok ? "✓" : "✗"}</div>`);
+  }
+  if (ex.exp5_llm_memory_ab && !ex.exp5_llm_memory_ab.skipped) {
+    const a = ex.exp5_llm_memory_ab.arms || {};
+    parts.push(`<div><strong>exp5</strong> rich=${a.memory_rich?.settled_rate ?? "—"} minimal=${a.memory_minimal?.settled_rate ?? "—"}</div>`);
+  } else if (ex.exp5_llm_memory_ab) {
+    parts.push(`<div class="muted"><strong>exp5</strong> skipped: ${ex.exp5_llm_memory_ab.reason || ""}</div>`);
+  }
+  if (r.aggregate) parts.push(`<div class="muted" style="margin-top:6px">aggregate over ${r.trials} trials available in raw JSON.</div>`);
+  return parts.join("") || `<div class="muted">No experiments returned.</div>`;
+}
+
+$("#hw8-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = Object.fromEntries(new FormData(e.currentTarget).entries());
+  const out = $("#hw8-out");
+  logTo(out, `<div class="muted">Submitting scale test (${form.agents} agents × ${form.instances} instances)…</div>`);
+  try {
+    const body = {
+      agents: parseInt(form.agents, 10),
+      instances: parseInt(form.instances, 10),
+      bad_rate: parseFloat(form.bad_rate),
+      ai_backend: form.ai_backend,
+      ai_sample_rate: parseFloat(form.ai_sample),
+      seed: parseInt(form.seed, 10),
+      workers_per_instance: parseInt(form.workers_per_instance, 10) || null,
+    };
+    const r = await API.post("/experiments/scale/run", body);
+    out.innerHTML = renderScaleReport(r);
+  } catch (err) { out.innerHTML = `<div class="empty" style="color:var(--bad)">${escapeHtml(err.message)}</div>`; }
+});
+
+function renderScaleReport(r) {
+  const ll = r.lifecycle_latency_s || {};
+  const c = r.counts || {};
+  return `
+    <div class="card">
+      <div class="tag">hw8 scale result</div>
+      <div class="grid grid-4" style="margin-top:8px">
+        <div class="stat-block info"><div class="label">Throughput</div><div class="value">${r.throughput_jobs_per_s} <small>j/s</small></div></div>
+        <div class="stat-block ok"><div class="label">Settled</div><div class="value">${c.settled || 0}</div></div>
+        <div class="stat-block bad"><div class="label">Refunded</div><div class="value">${c.refunded || 0}</div></div>
+        <div class="stat-block warn"><div class="label">HTTP errors</div><div class="value">${c.http_error || 0}</div></div>
+      </div>
+      <p class="muted" style="margin-top:10px">Lifecycle latency: p50 ${ll.p50}s · p95 ${ll.p95}s · p99 ${ll.p99}s · max ${ll.max}s · wall ${r.wall_s}s</p>
+      <details><summary class="muted">Per-instance breakdown</summary>
+        <table style="margin-top:6px">
+          <thead><tr><th>Instance</th><th>Agents</th><th>Settled</th><th>Refunded</th><th>HTTP errors</th><th>Throughput</th></tr></thead>
+          <tbody>
+            ${(r.per_instance || []).map(i => `<tr>
+              <td><code>${escapeHtml(i.label)}</code></td>
+              <td>${i.agents}</td><td>${i.settled}</td><td>${i.refunded}</td><td>${i.http_errors}</td>
+              <td>${i.throughput_jobs_per_s} j/s</td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </details>
+      <details><summary class="muted">Raw JSON</summary><pre class="json-view"><code>${escapeHtml(JSON.stringify(r, null, 2))}</code></pre></details>
+    </div>`;
+}
+</script>
+
+</body>
+</html>

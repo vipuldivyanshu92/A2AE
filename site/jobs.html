@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live jobs · Agent Escrow</title>
+  <link rel="stylesheet" href="/site/app.css" />
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand"><a href="/">Agent <span>Escrow</span></a></div>
+    <div class="links">
+      <a href="/" data-nav="home">Home</a>
+      <a href="/site/agents.html" data-nav="agents">Agents</a>
+      <a href="/site/jobs.html" data-nav="jobs" class="active">Live jobs</a>
+      <a href="/site/run.html" data-nav="run">Run tests</a>
+      <a href="/docs">Swagger</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <h1>Live jobs feed</h1>
+  <p class="muted">Real-time view of every job moving through the escrow lifecycle. Click a row for the full Alice↔Bob trace and run the AI verifier on demand.</p>
+
+  <section style="margin-top: 24px">
+    <div class="grid grid-4" id="totals"></div>
+  </section>
+
+  <section>
+    <div class="toolbar">
+      <span class="muted"><span class="dot"></span>Auto-refreshing every <span id="refresh-s">3</span>s</span>
+      <div class="grow"></div>
+      <label style="margin: 0">Status</label>
+      <select id="status-filter" style="width: auto">
+        <option value="">all</option>
+        <option>created</option>
+        <option>negotiated</option>
+        <option>funded</option>
+        <option>in_progress</option>
+        <option>submitted</option>
+        <option>verified</option>
+        <option>settled</option>
+        <option>refunded</option>
+      </select>
+      <label style="margin: 0">Limit</label>
+      <select id="limit" style="width: auto">
+        <option>25</option>
+        <option selected>50</option>
+        <option>100</option>
+        <option>200</option>
+      </select>
+      <button class="btn" id="pause">⏸ Pause</button>
+      <button class="btn" id="refresh">↻ Refresh</button>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden">
+      <table id="jobs-table">
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Status</th>
+            <th>Requester (Alice)</th>
+            <th>Doer (Bob)</th>
+            <th>Task</th>
+            <th>Policy</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Selected job</h2>
+    <div id="detail" class="empty">Click a row above to inspect a job, run the AI verifier, or fetch the trace.</div>
+  </section>
+
+</main>
+
+<footer>
+  Agent Escrow · <a href="/">Home</a> · <a href="/docs">Swagger</a>
+</footer>
+
+<script src="/site/app.js"></script>
+<script>
+const { API, fmtDate, escapeHtml, statusBadge, $, showError, setActiveNav } = window.AE;
+setActiveNav("jobs");
+
+let timer = null;
+let paused = false;
+const REFRESH_MS = 3000;
+
+async function loadJobs() {
+  const status = $("#status-filter").value;
+  const limit = $("#limit").value;
+  const tbody = $("#jobs-table tbody");
+  try {
+    const url = `/jobs?limit=${limit}` + (status ? `&status=${status}` : "");
+    const data = await API.get(url);
+    const rows = data.jobs;
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">No jobs yet. Create one with the <a href="/site/run.html">test runner</a>.</td></tr>`;
+      renderTotals([]);
+      return;
+    }
+    tbody.innerHTML = rows.map(j => `
+      <tr data-id="${escapeHtml(j.job_id)}" style="cursor:pointer">
+        <td><code>${escapeHtml(j.job_id.slice(0, 8))}…</code></td>
+        <td>${statusBadge(j.status)}</td>
+        <td><code>${escapeHtml(j.requester_id || "—")}</code></td>
+        <td><code>${escapeHtml(j.doer_id || "—")}</code></td>
+        <td class="muted" style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(j.task_description || "—")}</td>
+        <td>${j.dispute_policy ? `<span class="badge">${escapeHtml(j.dispute_policy)}</span>` : "—"}</td>
+        <td class="muted">${fmtDate(j.updated_at)}</td>
+      </tr>`).join("");
+
+    tbody.querySelectorAll("tr[data-id]").forEach(tr => {
+      tr.addEventListener("click", () => loadDetail(tr.dataset.id));
+    });
+    renderTotals(rows);
+  } catch (e) { showError(tbody, e); }
+}
+
+function renderTotals(rows) {
+  const counts = { settled: 0, refunded: 0, inflight: 0, total: rows.length };
+  for (const r of rows) {
+    if (r.status === "settled") counts.settled++;
+    else if (r.status === "refunded") counts.refunded++;
+    else counts.inflight++;
+  }
+  $("#totals").innerHTML = `
+    <div class="stat-block info"><div class="label">Total in view</div><div class="value">${counts.total}</div></div>
+    <div class="stat-block ok"><div class="label">Settled</div><div class="value">${counts.settled}</div></div>
+    <div class="stat-block bad"><div class="label">Refunded</div><div class="value">${counts.refunded}</div></div>
+    <div class="stat-block warn"><div class="label">In flight</div><div class="value">${counts.inflight}</div></div>
+  `;
+}
+
+async function loadDetail(id) {
+  const host = $("#detail");
+  host.innerHTML = `<div class="empty">Loading…</div>`;
+  try {
+    const trace = await API.get(`/jobs/${encodeURIComponent(id)}/trace`);
+    host.innerHTML = `
+      <div class="card">
+        <div class="tag">job</div>
+        <h3 style="margin-top:.3rem">${statusBadge(trace.status)} <code>${escapeHtml(id)}</code></h3>
+        <div class="row" style="margin-top:6px;font-size:.9rem;color:var(--fg-dim)">
+          <div>Requester (Alice): <code>${escapeHtml(trace.requester_id || "—")}</code></div>
+          <div>Doer (Bob): <code>${escapeHtml(trace.doer_id || "—")}</code></div>
+          <div>Audit entries: ${trace.audit_log.length}</div>
+        </div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn primary" data-action="verify-trace">Run AI trace audit</button>
+          <button class="btn" data-action="verify-deliverable">Run AI deliverable review</button>
+          <button class="btn" data-action="copy-trace">Copy full trace JSON</button>
+          <a class="btn" href="/jobs/${encodeURIComponent(id)}/trace" target="_blank">Open raw JSON</a>
+        </div>
+        <div id="ai-result" style="margin-top:8px"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="tag">timeline</div>
+        <h3 style="margin-top:.3rem">Audit log</h3>
+        <table>
+          <thead><tr><th>#</th><th>Action</th><th>From</th><th>→</th><th>To</th><th>When</th></tr></thead>
+          <tbody>
+            ${trace.audit_log.map(e => `
+              <tr>
+                <td class="muted">${e.id}</td>
+                <td><code>${escapeHtml(e.action)}</code></td>
+                <td>${e.from_status ? statusBadge(e.from_status) : `<span class="muted">—</span>`}</td>
+                <td class="muted">→</td>
+                <td>${e.to_status ? statusBadge(e.to_status) : `<span class="muted">—</span>`}</td>
+                <td class="muted">${fmtDate(e.created_at)}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="tag">deliverable</div>
+        <h3 style="margin-top:.3rem">Deliverable + evidence</h3>
+        <pre class="json-view"><code>${escapeHtml(JSON.stringify({ deliverable: trace.deliverable, evidence: trace.evidence }, null, 2))}</code></pre>
+      </div>`;
+
+    host.querySelector('[data-action="verify-trace"]').addEventListener("click", async () => {
+      await runAi(id, "verify_trace", "Trace audit");
+    });
+    host.querySelector('[data-action="verify-deliverable"]').addEventListener("click", async () => {
+      await runAi(id, "verify_ai", "Deliverable review");
+    });
+    host.querySelector('[data-action="copy-trace"]').addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(trace, null, 2));
+        alert("Copied trace JSON to clipboard");
+      } catch (err) { alert(err.message); }
+    });
+  } catch (e) { showError(host, e); }
+}
+
+async function runAi(jobId, endpoint, label) {
+  const host = $("#ai-result");
+  host.innerHTML = `<div class="muted">Running ${label}…</div>`;
+  try {
+    const r = await API.post(`/jobs/${encodeURIComponent(jobId)}/${endpoint}`, { backend: "auto" });
+    const verdict = r.verdict || "?";
+    host.innerHTML = `
+      <div class="card" style="border-color: var(--border-strong)">
+        <div class="tag">${escapeHtml(label)} · ${escapeHtml(r.backend || "")}</div>
+        <div style="margin-top:6px"><span class="badge verdict-${verdict}">${verdict}</span> · score <strong>${r.score}</strong> · ${r.latency_s}s</div>
+        <p style="margin:.5rem 0 0">${escapeHtml(r.reasoning || "")}</p>
+        ${r.issues && r.issues.length ? `<ul class="muted" style="margin:.4rem 0 0 1.2rem">${r.issues.map(i => `<li><code>${escapeHtml(i)}</code></li>`).join("")}</ul>` : ""}
+      </div>`;
+  } catch (e) { host.innerHTML = `<div class="empty" style="color:var(--bad)">${escapeHtml(e.message)}</div>`; }
+}
+
+function startTimer() {
+  stopTimer();
+  if (!paused) timer = setInterval(loadJobs, REFRESH_MS);
+}
+function stopTimer() { if (timer) clearInterval(timer); timer = null; }
+
+$("#status-filter").addEventListener("change", loadJobs);
+$("#limit").addEventListener("change", loadJobs);
+$("#refresh").addEventListener("click", loadJobs);
+$("#pause").addEventListener("click", () => {
+  paused = !paused;
+  $("#pause").textContent = paused ? "▶ Resume" : "⏸ Pause";
+  if (paused) stopTimer(); else startTimer();
+});
+
+loadJobs();
+startTimer();
+</script>
+
+</body>
+</html>

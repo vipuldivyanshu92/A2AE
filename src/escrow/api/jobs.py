@@ -52,7 +52,7 @@ def create_job(
     job_spec_json = req.model_dump()
     job_repo.create(
         job_id=job_id,
-        requester_id="requester",  # TODO: from auth
+        requester_id=(req.requester_id or "requester").strip() or "requester",
         job_spec_json=job_spec_json,
         callback_url=req.callback_url,
     )
@@ -185,6 +185,59 @@ def handshake_counteroffer(
         raise
 
     return {"status": "negotiated", "job_id": job_id}
+
+
+@router.get("")
+def list_jobs(
+    status: str | None = None,
+    requester_id: str | None = None,
+    doer_id: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+    db: Session = Depends(get_db),
+) -> dict:
+    """List recent jobs for the live dashboard. Filterable by status / agent.
+
+    Each row returns just enough to render a feed row; clients fetch
+    `/jobs/{id}` or `/jobs/{id}/trace` for full detail.
+    """
+    from sqlalchemy import select
+    from ..models import JobModel
+
+    limit = max(1, min(int(limit), 200))
+    offset = max(0, int(offset))
+
+    q = select(JobModel)
+    if status:
+        q = q.where(JobModel.status == status)
+    if requester_id:
+        q = q.where(JobModel.requester_id == requester_id)
+    if doer_id:
+        q = q.where(JobModel.doer_id == doer_id)
+    q = q.order_by(JobModel.updated_at.desc()).offset(offset).limit(limit)
+
+    rows = db.execute(q).scalars().all()
+    return {
+        "limit": limit,
+        "offset": offset,
+        "count": len(rows),
+        "jobs": [
+            {
+                "job_id": r.job_id,
+                "status": r.status,
+                "requester_id": r.requester_id,
+                "doer_id": r.doer_id,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+                "updated_at": r.updated_at.isoformat() if r.updated_at else None,
+                "task_description": (r.job_spec_json or {}).get("task_description"),
+                "max_budget": (r.job_spec_json or {}).get("max_budget"),
+                "dispute_policy": (r.job_contract_json or {}).get("dispute_policy")
+                if r.job_contract_json
+                else None,
+            }
+            for r in rows
+        ],
+    }
 
 
 @router.get("/{job_id}")

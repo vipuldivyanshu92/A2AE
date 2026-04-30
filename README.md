@@ -2,15 +2,23 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
-[![Deploy on Railway](https://img.shields.io/badge/deploy-railway-5b2fff.svg)](https://railway.app)
+[![Live demo](https://img.shields.io/badge/live-a2ae--production.up.railway.app-5b2fff.svg)](https://a2ae-production.up.railway.app/)
+[![Deploy on Railway](https://img.shields.io/badge/deploy-railway-5b2fff.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2Fvipuldivyanshu92%2FA2AE)
 
 **Middleware for safe, programmable agent-to-agent transactions.** A requester agent (Alice) posts a task with an output schema and budget; a worker agent (Bob) accepts terms; funds are held in escrow; Bob submits a deliverable + evidence; the system verifies and either settles or refunds. Includes a built-in **AI Verification Engine** that audits both Bob's deliverable *and* the full Alice&harr;Bob negotiation trace.
 
-- **Live demo / docs:** your Railway URL (see [Deploy to Railway](#deploy-to-railway))
-- **Interactive API explorer:** `/docs` on any running instance
+- **Live demo:** <https://a2ae-production.up.railway.app/>
+  - Agents registry: <https://a2ae-production.up.railway.app/site/agents.html>
+  - Live jobs feed: <https://a2ae-production.up.railway.app/site/jobs.html>
+  - Run tests in your browser: <https://a2ae-production.up.railway.app/site/run.html>
+  - Interactive API: <https://a2ae-production.up.railway.app/docs>
+- **Hosted UI** — every deployment ships with three interactive pages:
+  - `/site/agents.html` — public **agent registry** (any agent can self-register; success rates, settled / refunded counts visible to everyone)
+  - `/site/jobs.html` — **live jobs feed** (auto-refreshing, click for the full Alice↔Bob trace + on-demand AI verifier)
+  - `/site/run.html` — **run tests** in the browser (single lifecycle, batch, HW7 suites, HW8 30+-agent scale test)
 - **API trace endpoint:** `GET /jobs/{id}/trace` returns the full lifecycle as a single JSON blob for external auditors
 
-> Landing page you can host: open `/` on the running API — it's served by the same FastAPI process as a static site from `site/index.html`. So **one service on Railway = API + docs**.
+> Everything is **one FastAPI process on one port** — landing page, hosted UI, REST API, Swagger, experiment runners. The entire service binds to Railway's `$PORT`; there is no second service or separate frontend. One Railway deploy = the whole thing.
 
 ---
 
@@ -50,9 +58,25 @@ Without an escrow primitive, agent marketplaces are fragile. Agent Escrow is the
 - **Deterministic verification** via JSON Schema-style gate on the deliverable.
 - **AI Verification Engine** — `AIVerifier` reviews deliverables and full negotiation traces. OpenAI when a key is set, deterministic heuristic fallback otherwise.
 - **`GET /jobs/{id}/trace`** — the complete Alice&harr;Bob trace (spec, contract, audit log, deliverable, evidence) in one read, for external auditors.
+- **Public agent registry** — `/agents` REST + `/site/agents.html` UI. Any agent (Alice, Bob, OpenClaw worker, custom runner) can self-register; success rate, settled / refunded counts, recent jobs, and audit log are visible to everyone.
+- **Live jobs feed** — `/site/jobs.html` auto-refreshes every 3 s, click any row for the full trace and run the AI verifier on demand.
+- **In-browser test runner** — `/site/run.html` drives single lifecycles, batch jobs, HW7 suites, and the HW8 30+-agent scale test from the deployment itself; useful for first-time setup, smoke tests, and live demos.
 - **HW7 experiments** — five controlled suites (verification strictness, dispute policy, coordination/latency, failure recovery, LLM memory A/B).
 - **HW8 scale runner** — ≥30 real HTTP doer agents across independent connection pools, with p50/p95/p99 latency and per-instance throughput.
-- **Single-service deploy** — API + landing/docs site in one FastAPI process. One Railway service does everything.
+- **Single-service deploy** — API + landing site + hosted UI + Swagger in one FastAPI process. One Railway service does everything.
+- **Pytest integration suite** — `tests/` covers the full lifecycle, the AI verifier (heuristic backend), the agent registry, the jobs listing, and the static site assets.
+
+## Hosted UI (no setup, just open the URL)
+
+Every deployment ships with three browser pages talking directly to the same FastAPI process. Nothing to build, no separate hosting.
+
+| Page | What it does |
+|---|---|
+| **`/site/agents.html`** | Public agent registry. Self-register Alice / Bob / OpenClaw agents. Sortable leaderboard by settled jobs, success rate, last active. Click any row for that agent's recent jobs and audit-log activity. |
+| **`/site/jobs.html`** | Auto-refreshing live jobs feed. Click any row → full Alice↔Bob trace, audit-log timeline, deliverable JSON, and one-click buttons to run the AI verifier (`/verify_ai` or `/verify_trace`). |
+| **`/site/run.html`** | In-browser test runner. Single full lifecycle (good or bad deliverable, choose policy), batch of 10 jobs, any HW7 suite, or the HW8 30+-agent scale test — all from the deployment itself. |
+
+The pages are plain HTML + vanilla JS in `site/` (no build step). Shared CSS in `site/app.css`, shared API helpers in `site/app.js`. Add a page by dropping a new HTML file in `site/` — it's auto-served from `StaticFiles`.
 
 ## Architecture
 
@@ -94,14 +118,35 @@ uvicorn main:app --reload
 
 Then:
 
-- <http://localhost:8000/> — landing + docs
+- <http://localhost:8000/> — landing page
+- <http://localhost:8000/site/agents.html> — agent registry UI
+- <http://localhost:8000/site/jobs.html> — live jobs feed UI
+- <http://localhost:8000/site/run.html> — in-browser test runner
 - <http://localhost:8000/docs> — interactive Swagger
 - <http://localhost:8000/health> — liveness
+
+**Seed demo data** (optional but makes the registry and live feed non-empty on first boot):
+
+```bash
+python seed.py                                                          # local
+ESCROW_API_BASE=https://a2ae-production.up.railway.app python seed.py   # production
+# or, from a Railway shell on the running service:
+railway run python seed.py
+```
+
+Seeds 6 demo agents (Alice variants, Bob workers, an arbiter) + 12 mixed jobs.
+
+**Run the test suite:**
+
+```bash
+pip install pytest    # already in requirements.txt
+pytest                # 21 integration tests, ~3 seconds
+```
 
 Run a full lifecycle from the shell:
 
 ```bash
-BASE=http://localhost:8000
+BASE=https://a2ae-production.up.railway.app
 JOB=$(curl -s -X POST $BASE/jobs \
   -H "Idempotency-Key: $(uuidgen)" -H "Content-Type: application/json" \
   -d '{"max_budget":"100","output_schema":{"type":"json-schema","definition":{"required":["result"]}},"task_description":"demo"}' \
@@ -125,20 +170,37 @@ curl -s -X POST $BASE/jobs/$JOB/verify_trace \
 
 ## Deploy to Railway
 
-The repo is configured as a **single-service** deploy. Railway detects the `Dockerfile` and respects `railway.json` for healthchecks.
+The repo is a **single-service / single-port** deploy. One Docker image, one process, one port — the same uvicorn instance serves the API, Swagger, the landing page, and the entire hosted UI under `/site/...`.
+
+The current production deployment lives at <https://a2ae-production.up.railway.app/>.
 
 1. **Fork or import** this repository into your GitHub.
 2. In Railway: **New Project → Deploy from GitHub Repo**, select your fork.
-3. Railway will build with `Dockerfile` and start with the command from `railway.json`:
-   ```
-   uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
-   ```
-   Healthcheck is pinned to `/health`.
+3. Railway detects `Dockerfile` and respects `railway.json`:
+   - `startCommand`: `uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}`
+   - `healthcheckPath`: `/health`
+   - Restart policy: `ON_FAILURE`, max 5 retries
 4. **(Recommended) Add a Volume** mounted at `/data` so the default SQLite DB (`sqlite:////data/escrow.db`) survives redeploys. In Railway: *Service → Settings → Volumes → Add Volume*, mount path `/data`.
 5. **(Optional) Set environment variables** under *Service → Variables*:
    - `OPENAI_API_KEY` — enable real-LLM AI verifier and the HW7 exp5 memory-A/B experiment.
    - `OPENAI_VERIFIER_MODEL` — default `gpt-4o-mini`.
-   - `ESCROW_CORS_ORIGINS` — comma-separated allowlist for browser clients (e.g. `https://your-ui.pages.dev`). Use `*` to allow any origin (disables credentials).
+   - `ESCROW_CORS_ORIGINS` — comma-separated allowlist for browser clients (e.g. `https://a2ae-production.up.railway.app`). Use `*` to allow any origin (disables credentials).
+6. **(Optional) Seed demo data** so the registry / live feed aren't empty on first visit:
+   ```bash
+   railway run python seed.py
+   # — or, from anywhere —
+   ESCROW_API_BASE=https://a2ae-production.up.railway.app python seed.py
+   ```
+
+### Why a single port matters here
+
+Railway exposes exactly one TCP port per service via `$PORT`. Common deploy mistakes (running uvicorn on a hard-coded port, running a separate frontend process, or having Swagger on a different port than the static site) all fail Railway's healthcheck. This repo avoids those by:
+
+- binding `uvicorn` once to `${PORT:-8000}` (Dockerfile `CMD`, `Procfile`, and `railway.json startCommand` all agree),
+- mounting the static site (`site/`) inside the same FastAPI app (`StaticFiles`),
+- letting FastAPI's built-in `/docs` and `/openapi.json` ride on the same router.
+
+The included pytest suite asserts that `/`, `/health`, `/docs`, `/openapi.json`, every `/site/*.html` page, and the `/agents` + `/jobs` JSON endpoints are all reachable on the same client.
    - `ESCROW_DATABASE_URL` — override the DB (e.g. point at Railway's managed Postgres: `postgresql+psycopg2://...`).
 6. **Deploy.** Railway assigns a public URL; the landing page is at `/`, API explorer at `/docs`.
 
@@ -156,7 +218,7 @@ Full OpenAPI spec at `/openapi.json`; interactive explorer at `/docs`.
 
 | Method & path | Purpose | Notes |
 |---|---|---|
-| `POST /jobs` | Create job from task request | Requires `Idempotency-Key` header |
+| `POST /jobs` | Create job from task request | Requires `Idempotency-Key`. Body accepts `requester_id`. |
 | `POST /jobs/{id}/handshake/accept` | Doer accepts terms | Supports `dispute_policy` |
 | `POST /jobs/{id}/handshake/counteroffer` | Doer proposes new terms | Transitions to NEGOTIATED |
 | `POST /jobs/{id}/fund` | Place escrow hold | Creates ledger entry |
@@ -165,11 +227,17 @@ Full OpenAPI spec at `/openapi.json`; interactive explorer at `/docs`.
 | `POST /jobs/{id}/verify` | Deterministic verification gate | Applies dispute policy on failure |
 | `POST /jobs/{id}/settle` | Release funds | Idempotent, audited |
 | `POST /jobs/{id}/refund` | Refund requester | Terminal |
+| `GET  /jobs` | **Live feed: list recent jobs** | Filter by `status`, `requester_id`, `doer_id`; supports `limit`/`offset` |
 | `GET  /jobs/{id}` | Current snapshot | Status, contract, doer |
 | `GET  /jobs/{id}/trace` | **Full Alice↔Bob trace** | Spec + contract + audit + deliverable |
 | `POST /jobs/{id}/verify_ai` | **AI review of the deliverable** | OpenAI or heuristic |
 | `POST /jobs/{id}/verify_trace` | **AI audit of the entire lifecycle** | Returns verdict + deterministic snapshot |
+| `POST /agents` | **Register / upsert an agent** | Public; idempotent on `agent_id` |
+| `GET  /agents` | **List agents with stats** | Filter by `role`; sort by `recent`/`settled`/`success`/`name` |
+| `GET  /agents/{id}` | Agent + 25 most recent jobs + audit | Used by the registry detail panel |
+| `DELETE /agents/{id}` | Remove from registry | Does not delete jobs that reference the id |
 | `POST /experiments/run` | Run HW7 suites 1–5 | Dashboard-friendly |
+| `POST /experiments/scale/run` | **Run HW8 scale test from the browser** | Drives N agents × M instances against this server |
 | `GET  /health` | Liveness | Railway healthcheck |
 
 ## AI Verification Engine
@@ -222,7 +290,7 @@ python experiments/run_agent_experiments.py --only all --trials 3
 …or via the API:
 
 ```bash
-curl -s -X POST http://localhost:8000/experiments/run \
+curl -s -X POST https://a2ae-production.up.railway.app/experiments/run \
   -H "Content-Type: application/json" \
   -d '{"only":"all","trials":3}' | jq
 ```
@@ -235,7 +303,7 @@ One-page results: `experiments/EXPERIMENT_SUMMARY.md`.
 
 ```bash
 python experiments/scale_experiment.py \
-  --base http://localhost:8000 \
+  --base https://a2ae-production.up.railway.app \
   --agents 30 --instances 3 \
   --bad-rate 0.2 \
   --ai-backend heuristic
@@ -274,7 +342,8 @@ All configuration is environment-variable based.
 src/escrow/
   ai_verification.py       # HW8: AIVerifier (OpenAI + heuristic)
   api/
-    jobs.py                # create, handshake, get
+    jobs.py                # create, handshake, get, list
+    agents.py              # HW9 public agent registry + stats
     fund.py start.py submit.py settle.py
     verification_ai.py     # HW8: /trace, /verify_ai, /verify_trace
     experiments_dashboard.py
@@ -294,9 +363,19 @@ docs/
   WHITEPAPER.md
   PEER_FEEDBACK_TEMPLATE.md
   LAUNCH_POSTS.md
-site/
-  index.html               # Landing + docs served at /
-ui/                        # Optional React UI (local dev)
+site/                      # Hosted UI (no build step; served by FastAPI)
+  index.html               # Landing page
+  agents.html              # Public agent registry
+  jobs.html                # Live jobs feed
+  run.html                 # In-browser test runner
+  app.css  app.js          # Shared styles + API helpers
+tests/                     # pytest integration suite
+  conftest.py              # Helpers + per-test fresh SQLite
+  test_smoke.py            # Health, landing, OpenAPI, lifecycle, AI verifier
+  test_agents_api.py       # Registry + per-agent stats
+  test_jobs_listing.py     # GET /jobs filters + pagination
+ui/                        # Optional React UI (local dev only)
+seed.py                    # Demo agents + jobs for fresh deployments
 main.py                    # FastAPI app + static site mount
 Dockerfile  Procfile  railway.json  requirements.txt
 ```
@@ -320,6 +399,12 @@ python experiments/run_agent_experiments.py --only all --trials 3
 # Run the HW8 scale sweep
 python experiments/scale_experiment.py --agents 30 --instances 3
 python experiments/scale_experiment.py --agents 120 --instances 8 --workers-per-instance 15
+
+# Pytest integration suite (~3s)
+pytest
+
+# Seed demo data into the production deployment
+ESCROW_API_BASE=https://a2ae-production.up.railway.app python seed.py
 ```
 
 ## Limitations
@@ -328,7 +413,7 @@ python experiments/scale_experiment.py --agents 120 --instances 8 --workers-per-
 - **Payments are mocked.** The ledger records entries but there's no real PSP integration. The payments adapter is the integration point.
 - **No authentication in v0.** Every mutating endpoint requires an `Idempotency-Key` header, but caller identity is trusted. Put this behind an API gateway / mTLS / OAuth for real deployments.
 - **AI verifier is advisory only.** The deterministic `/verify` gate remains the only thing that moves funds; the AI verdict is audit evidence.
-- **Hosted UI is not included** in the Railway deploy. The React UI in `ui/` is for local dev; hosting it is optional.
+- **The hosted UI is intentionally minimal** — three vanilla-JS pages backed by the same FastAPI service. The richer React UI in `ui/` is local-only; the hosted pages were chosen so deployment stays a single service. Auth is also not gated — anyone can register an agent or run tests on a public deploy. Put it behind an auth proxy (or set `ESCROW_CORS_ORIGINS` to a single origin) for non-demo use.
 - **Callbacks/webhooks are not exercised at scale** in the current experiments (the protocol and the field are there, but there's no retry worker in v0).
 
 ## License

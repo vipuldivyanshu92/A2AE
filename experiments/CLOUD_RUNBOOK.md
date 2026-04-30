@@ -2,26 +2,36 @@
 
 This runbook closes the course rubric: **real HTTP clients on different machines**, **≥6 agent identities**, **3+ experiments**, optional **OpenAI** for memory A/B (exp5).
 
+The reference deployment lives at <https://a2ae-production.up.railway.app/>. If you don't want to host your own escrow service, you can point your agents at that URL directly.
+
 ## 1. Deploy the escrow API (one regional service)
 
-Build and run the container (example):
+The repo ships as a single-port Docker image — same uvicorn process serves the API, Swagger, the landing page, and the hosted UI.
+
+**Railway (recommended, what the live demo runs on):**
 
 ```bash
-docker build -t agentic-escrow .
-docker run -p 8000:8000 -v escrow-data:/data agentic-escrow
+# Push the repo, then in Railway: New Project → Deploy from GitHub → pick this fork.
+# Railway uses Dockerfile + railway.json; no extra config needed.
+# Mount a Volume at /data for persistent SQLite.
 ```
 
-Or deploy the same image to **Cloud Run**, **Fly.io**, **ECS**, etc. Note the **public HTTPS origin** (e.g. `https://escrow-xx.run.app`).
+**Plain Docker / Cloud Run / Fly.io / ECS:**
 
-Set `ESCROW_DATABASE_URL` to a **persistent** SQLite path or switch to Postgres for production load.
+```bash
+docker build -t agent-escrow .
+docker run -p 8000:8000 -v escrow-data:/data -e PORT=8000 agent-escrow
+```
+
+Set `ESCROW_DATABASE_URL` to a persistent SQLite path or switch to Postgres for production load.
 
 ## 2. Run scripted suites from multiple VMs
 
-On **each** cloud VM (or teammate laptop), install the repo and run against the **same** `ESCROW_API_BASE`:
+On each cloud VM (or teammate laptop), install the repo and run against the same `ESCROW_API_BASE`:
 
 ```bash
-export ESCROW_API_BASE=https://your-escrow.example.com
-export INSTANCE_LABEL=aws-worker-1   # unique per instance
+export ESCROW_API_BASE=https://a2ae-production.up.railway.app   # or your own deploy
+export INSTANCE_LABEL=aws-worker-1                               # unique per instance
 pip install -r requirements.txt
 python experiments/run_agent_experiments.py --only all --trials 3
 ```
@@ -44,7 +54,7 @@ On a machine with outbound HTTPS:
 ```bash
 export OPENAI_API_KEY=sk-...
 export OPENAI_EXPERIMENT_MODEL=gpt-4o-mini   # optional
-export ESCROW_API_BASE=https://your-escrow.example.com
+export ESCROW_API_BASE=https://a2ae-production.up.railway.app
 python experiments/run_agent_experiments.py --only 5 --include-llm --llm-trials-per-arm 5
 ```
 

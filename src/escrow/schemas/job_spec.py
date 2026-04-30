@@ -52,3 +52,8 @@ class TaskRequest(BaseModel):
     evaluation_rubric: EvaluationRubric | None = None
     task_description: str | None = None
     callback_url: str | None = Field(None)
+    requester_id: str | None = Field(
+        None,
+        max_length=128,
+        description="Public id of the requesting agent (Alice). Should match the agent_id you self-registered at /agents. Defaults to 'requester' for back-compat.",
+    )

@@ -1,5 +1,6 @@
 """Dashboard API: run or simulate agent experiment suites against an escrow base URL."""
 
+from dataclasses import asdict
 from typing import Any, Literal
 
 import httpx
@@ -101,3 +102,61 @@ def experiments_run(body: ExperimentsRunBody, request: Request) -> dict[str, Any
         ) from e
     except httpx.RequestError as e:
         raise HTTPException(status_code=502, detail=f"Target API unreachable: {e}") from e
+
+
+# ---------------------------------------------------------------------------
+# HW8 scale runner — driveable from the hosted UI
+# ---------------------------------------------------------------------------
+
+
+class ScaleRunBody(BaseModel):
+    """Body for POST /experiments/scale/run (hosted UI driver for HW8)."""
+
+    target_base_url: str | None = Field(
+        None,
+        description="Where to drive load. Omit to drive this server itself.",
+    )
+    agents: int = Field(30, ge=1, le=500)
+    instances: int = Field(3, ge=1, le=32)
+    bad_rate: float = Field(0.2, ge=0.0, le=1.0)
+    ai_backend: Literal["auto", "openai", "heuristic"] = "heuristic"
+    ai_sample_rate: float = Field(1.0, ge=0.0, le=1.0)
+    seed: int = 17
+    workers_per_instance: int | None = Field(None, ge=1, le=64)
+
+
+@router.post("/experiments/scale/run")
+def experiments_scale_run(
+    body: ScaleRunBody, request: Request
+) -> dict[str, Any]:
+    """Run the HW8 scale experiment synchronously and return the report.
+
+    For small N (≤120) this responds in a few seconds. For very large N,
+    prefer running `python experiments/scale_experiment.py` directly on a
+    cloud VM and pointing it at this server.
+    """
+    from experiments.scale_experiment import run_scale
+
+    default_base = str(request.base_url).rstrip("/")
+    base = (body.target_base_url or default_base).rstrip("/")
+
+    try:
+        rep = run_scale(
+            base=base,
+            total_agents=body.agents,
+            instances=body.instances,
+            bad_rate=body.bad_rate,
+            ai_backend=body.ai_backend,
+            ai_sample_rate=body.ai_sample_rate,
+            seed=body.seed,
+            max_workers_per_instance=body.workers_per_instance,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"scale runner failed: {e}") from e
+
+    out = asdict(rep)
+    # Trim the per-agent rows to keep the response small for the browser.
+    if isinstance(out.get("results"), list) and len(out["results"]) > 50:
+        out["results_truncated"] = len(out["results"]) - 50
+        out["results"] = out["results"][:50]
+    return out

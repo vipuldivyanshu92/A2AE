@@ -68,6 +68,28 @@ class AuditLogModel(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
+class AgentModel(Base):
+    """
+    Public agent registry — any agent (Alice, Bob, OpenClaw worker, …) can
+    list itself here so peers can discover it and see its track record.
+    """
+
+    __tablename__ = "agents"
+
+    agent_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    display_name: Mapped[str] = mapped_column(String(256), nullable=False)
+    role: Mapped[str] = mapped_column(String(32), nullable=False, default="both")
+    endpoint_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    webhook_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    public_key: Mapped[str | None] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    tags: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+
 class LedgerEntryModel(Base):
     """Ledger entry persistence - Task 4.2."""
 

@@ -1,6 +1,7 @@
 # Launch posts — ready to copy/paste
 
-Replace `<RAILWAY_URL>` and `<GITHUB_URL>` before posting.
+Live demo: <https://a2ae-production.up.railway.app/>
+Repo: <https://github.com/vipuldivyanshu92/A2AE>
 
 ---
 
@@ -12,8 +13,8 @@ Replace `<RAILWAY_URL>` and `<GITHUB_URL>` before posting.
 > - AI Verification Engine audits the deliverable AND the full negotiation trace
 > - runs on one Railway service
 >
-> <RAILWAY_URL>
-> <GITHUB_URL>
+> https://a2ae-production.up.railway.app/
+> https://github.com/vipuldivyanshu92/A2AE
 
 ### Thread variant (6 tweets)
 
@@ -31,8 +32,8 @@ Agent Escrow is the smallest thing that makes this safe. Open source, MIT. 🧵
 5/ HW8 scale: 30 → 60 → 120 real HTTP doer agents across parallel connection pools. Throughput plateaus at ~39 jobs/s — textbook single-writer-SQLite signature. Postgres is the next move. Zero HTTP errors in the sweep.
 
 6/ Everything is one FastAPI process. Landing page + Swagger + API + HW7/HW8 experiment runners in a single Railway service. README has setup, curl demo, architecture, limitations.
-Repo: <GITHUB_URL>
-Demo: <RAILWAY_URL>
+Repo: https://github.com/vipuldivyanshu92/A2AE
+Demo: https://a2ae-production.up.railway.app/
 
 ---
 
@@ -53,9 +54,9 @@ I've just open-sourced **Agent Escrow**, a minimal middleware that makes agent-t
 
 It ships as one FastAPI service: API + landing/docs site + experiment runners. One Railway click to deploy.
 
-Live demo + docs: <RAILWAY_URL>
-Repo (MIT): <GITHUB_URL>
-Short white paper: <GITHUB_URL>/blob/main/docs/WHITEPAPER.md
+Live demo + docs: https://a2ae-production.up.railway.app/
+Repo (MIT): https://github.com/vipuldivyanshu92/A2AE
+Short white paper: https://github.com/vipuldivyanshu92/A2AE/blob/main/docs/WHITEPAPER.md
 
 If you're building agent marketplaces, arbitration agents, or multi-step workflows with payment, I'd love feedback. And if you want to plug your own framework (OpenClaw / LangGraph / Temporal) into the REST flow, it's a ~50-line adapter.
 
@@ -80,9 +81,9 @@ Scale numbers (30/60/120 doer agents, multiple concurrent connection pools, 20% 
 
 Everything is one FastAPI process: API + landing/docs site + experiment runners. One Railway service does it all.
 
-Repo (MIT): <GITHUB_URL>
-Live: <RAILWAY_URL>
-Short write-up: <GITHUB_URL>/blob/main/docs/WHITEPAPER.md
+Repo (MIT): https://github.com/vipuldivyanshu92/A2AE
+Live: https://a2ae-production.up.railway.app/
+Short write-up: https://github.com/vipuldivyanshu92/A2AE/blob/main/docs/WHITEPAPER.md
 
 Happy to take feedback, especially from people building arbitration agents or agent marketplaces.
 
@@ -96,5 +97,5 @@ Happy to take feedback, especially from people building arbitration agents or ag
 
 Minimal middleware to make agent-to-agent work safe to buy and sell. Contract-first handshake, funded hold, scoped capability tokens, deterministic verification gate that moves funds, plus an AI Verification Engine that audits the whole Alice↔Bob trace (pure auditor, never mutates state). Dual backend — OpenAI with a deterministic heuristic fallback, so scale tests don't burn tokens. Scale-tested with 30/60/120 real HTTP doer agents; throughput plateaus at ~39 jobs/s on a single FastAPI + SQLite node (single-writer signature). One Railway service hosts the API, the landing page, and the Swagger docs. MIT.
 
-Repo: <GITHUB_URL>
-Demo: <RAILWAY_URL>
+Repo: https://github.com/vipuldivyanshu92/A2AE
+Demo: https://a2ae-production.up.railway.app/

@@ -16,10 +16,14 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
+COPY seed.py .
 COPY src ./src
 COPY experiments ./experiments
 COPY site ./site
 
+# Railway listens on a single, dynamically-assigned $PORT. We bind ONE
+# uvicorn process to that port; this same process serves the API,
+# Swagger, the landing page, and the hosted UI (`/site/...`). No
+# separate frontend service is needed.
 EXPOSE 8000
-# Railway sets $PORT; default to 8000 for local `docker run`.
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]

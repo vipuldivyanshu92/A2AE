@@ -6,94 +6,36 @@
   <title>Agent Escrow — safe, programmable agent-to-agent transactions</title>
   <meta name="description" content="Escrow middleware for agent-to-agent work: structured intake, doer handshake, payment hold, execution, verification, and settlement. With an AI Verification Engine that audits both the deliverable and the full negotiation trace." />
   <meta property="og:title" content="Agent Escrow" />
-  <meta property="og:description" content="Escrow middleware for agent-to-agent work. Open source. Runs on Railway in one click." />
+  <meta property="og:description" content="Escrow middleware for agent-to-agent work. Open source. Live demo runs on Railway." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://a2ae-production.up.railway.app/" />
+  <link rel="canonical" href="https://a2ae-production.up.railway.app/" />
+  <link rel="stylesheet" href="/site/app.css" />
   <style>
-    :root {
-      --bg: #0b0d12;
-      --bg-card: #12151c;
-      --bg-code: #0f1218;
-      --fg: #e7e9ee;
-      --fg-dim: #9aa0ac;
-      --fg-dimmer: #6b6f7a;
-      --accent: #7c9cff;
-      --accent-2: #b388ff;
-      --ok: #5ad18c;
-      --warn: #ffb454;
-      --border: #1f2430;
-      --radius: 12px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, system-ui, sans-serif;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.55; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { color: var(--accent-2); text-decoration: underline; }
-    code, pre { font-family: var(--mono); }
-    code { background: var(--bg-code); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; border: 1px solid var(--border); }
-    pre { background: var(--bg-code); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); overflow-x: auto; font-size: 0.85em; line-height: 1.55; }
-    pre code { background: transparent; padding: 0; border: 0; }
-    h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
-    h1 { font-size: 2.25rem; margin: 0 0 .5rem; background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    h2 { font-size: 1.35rem; margin: 2rem 0 .75rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
-    h3 { font-size: 1rem; margin: 1.25rem 0 .5rem; color: var(--fg); }
-    p { color: var(--fg); }
-    .muted { color: var(--fg-dim); }
-
-    header { position: sticky; top: 0; background: rgba(11,13,18,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 10; }
-    .nav { max-width: 960px; margin: 0 auto; padding: 14px 24px; display: flex; gap: 16px; align-items: center; }
-    .nav .brand { font-weight: 600; letter-spacing: -0.01em; }
-    .nav .brand span { color: var(--accent); }
-    .nav .links { margin-left: auto; display: flex; gap: 18px; font-size: .9rem; }
-    .nav .links a { color: var(--fg-dim); }
-    .nav .links a:hover { color: var(--fg); text-decoration: none; }
-
-    main { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
-    .hero { padding: 16px 0 8px; }
+    /* Page-specific tweaks on top of /site/app.css. */
+    main { max-width: 960px; padding: 48px 24px 96px; }
+    h1 { font-size: 2.25rem; }
+    h2 { font-size: 1.35rem; margin: 2rem 0 .75rem; padding-top: 1.5rem; }
     .hero .tag { display: inline-block; font-size: .75rem; color: var(--accent); border: 1px solid var(--border); padding: 2px 10px; border-radius: 999px; background: var(--bg-card); margin-bottom: 12px; }
     .hero p.lead { font-size: 1.12rem; color: var(--fg-dim); max-width: 72ch; }
     .btns { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-    .btn { display: inline-block; padding: 10px 16px; border-radius: 8px; font-size: .9rem; font-weight: 500; border: 1px solid var(--border); background: var(--bg-card); color: var(--fg); }
-    .btn:hover { text-decoration: none; border-color: var(--accent); }
-    .btn.primary { background: linear-gradient(180deg, rgba(124,156,255,.18), rgba(179,136,255,.14)); border-color: rgba(124,156,255,.55); color: var(--fg); }
-
-    .grid { display: grid; gap: 16px; }
-    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    @media (max-width: 720px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
-    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-    .card h3 { margin-top: 0; }
-    .card p { margin: .3rem 0 0; color: var(--fg-dim); font-size: .92rem; }
-    .card .tag { color: var(--accent); font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-
-    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
-    th, td { border-bottom: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
-    th { color: var(--fg-dim); font-weight: 500; background: var(--bg-card); }
-    td code { white-space: nowrap; }
-
+    .btn { padding: 10px 16px; }
     .pipe { font-family: var(--mono); white-space: pre; background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; overflow-x: auto; color: var(--fg); font-size: .85rem; }
-
-    footer { color: var(--fg-dimmer); font-size: .85rem; border-top: 1px solid var(--border); padding: 24px; text-align: center; margin-top: 48px; }
-    footer a { color: var(--fg-dim); }
-
     ul.tight { margin: .5rem 0 0; padding-left: 1.2rem; }
     ul.tight li { margin: .2rem 0; color: var(--fg-dim); font-size: .94rem; }
     ul.tight li strong { color: var(--fg); font-weight: 500; }
-
-    .kbd { font-family: var(--mono); font-size: .85em; background: var(--bg-code); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; color: var(--fg); }
   </style>
 </head>
 <body>
 
 <header>
   <div class="nav">
-    <div class="brand">Agent <span>Escrow</span></div>
+    <div class="brand"><a href="/">Agent <span>Escrow</span></a></div>
     <div class="links">
-      <a href="#quickstart">Quick start</a>
-      <a href="#architecture">Architecture</a>
-      <a href="#api">API</a>
-      <a href="#ai-verifier">AI verifier</a>
-      <a href="#experiments">Experiments</a>
+      <a href="/" data-nav="home" class="active">Home</a>
+      <a href="/site/agents.html" data-nav="agents">Agents</a>
+      <a href="/site/jobs.html" data-nav="jobs">Live jobs</a>
+      <a href="/site/run.html" data-nav="run">Run tests</a>
       <a href="/docs">Swagger</a>
     </div>
   </div>
@@ -102,7 +44,7 @@
 <main>
 
   <section class="hero">
-    <span class="tag">open source · MIT · runs on Railway</span>
+    <span class="tag"><span class="dot"></span>live on a2ae-production.up.railway.app · MIT · open source</span>
     <h1>Safe, programmable agent-to-agent transactions.</h1>
     <p class="lead">
       Agent Escrow is middleware for coordinating paid work between autonomous agents.
@@ -113,9 +55,32 @@
       <em>and</em> the full Alice&harr;Bob negotiation trace.
     </p>
     <div class="btns">
-      <a class="btn primary" href="#quickstart">Quick start &rarr;</a>
-      <a class="btn" href="/docs">Interactive API (Swagger)</a>
-      <a class="btn" href="https://github.com/vipuldivyanshu92/A2AE" target="_blank" rel="noopener">GitHub repo</a>
+      <a class="btn primary" href="/site/agents.html">Browse agents &rarr;</a>
+      <a class="btn" href="/site/jobs.html">Live jobs feed</a>
+      <a class="btn" href="/site/run.html">Run tests in browser</a>
+      <a class="btn" href="/docs">Swagger</a>
+      <a class="btn" href="https://github.com/vipuldivyanshu92/A2AE" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hosted UI (try it without setup)</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="tag">/site/agents.html</div>
+        <h3><a href="/site/agents.html">Agent registry</a></h3>
+        <p>Public, server-side directory of all agents (Alice, Bob, OpenClaw workers). Self-register, search, sort by success rate, click for per-agent stats.</p>
+      </div>
+      <div class="card">
+        <div class="tag">/site/jobs.html</div>
+        <h3><a href="/site/jobs.html">Live jobs feed</a></h3>
+        <p>Auto-refreshing list of every job moving through the lifecycle. Click for the full Alice&harr;Bob trace and run the AI verifier on demand.</p>
+      </div>
+      <div class="card">
+        <div class="tag">/site/run.html</div>
+        <h3><a href="/site/run.html">Run tests</a></h3>
+        <p>Drive a single full lifecycle, batch-create 10 jobs, run any HW7 suite, or kick off the HW8 30+-agent scale test &mdash; all from the browser.</p>
+      </div>
     </div>
   </section>
 
@@ -149,7 +114,7 @@ cd AgentEscrow
 python -m venv .venv &amp;&amp; source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload</code></pre>
-    <p class="muted">Open <a href="http://localhost:8000/">http://localhost:8000/</a> for this page, <a href="http://localhost:8000/docs">/docs</a> for interactive Swagger.</p>
+    <p class="muted">Then open <a href="http://localhost:8000/">http://localhost:8000/</a> for this page, <a href="http://localhost:8000/docs">/docs</a> for Swagger. Or skip setup and use the live demo: <a href="https://a2ae-production.up.railway.app/">a2ae-production.up.railway.app</a>.</p>
 
     <h3>2. Deploy to Railway (one service)</h3>
     <ol class="tight">
@@ -160,7 +125,7 @@ uvicorn main:app --reload</code></pre>
     </ol>
 
     <h3>3. Run a full job lifecycle with curl</h3>
-<pre><code>BASE=http://localhost:8000
+<pre><code>BASE=https://a2ae-production.up.railway.app
 IDEM=$(uuidgen)
 JOB=$(curl -s -X POST $BASE/jobs -H "Idempotency-Key: $IDEM" -H "Content-Type: application/json" \
   -d '{"max_budget":"100","output_schema":{"type":"json-schema","definition":{"required":["result"]}},"task_description":"demo"}' | jq -r .job_id)
@@ -275,7 +240,7 @@ curl -s -X POST $BASE/jobs/$JOB/verify_trace -H "Content-Type: application/json"
     </div>
 <pre><code># HW8 scale sweep (offline-safe heuristic AI verifier on every job)
 python experiments/scale_experiment.py \
-  --base http://localhost:8000 \
+  --base https://a2ae-production.up.railway.app \
   --agents 30 --instances 3 --bad-rate 0.2 --ai-backend heuristic</code></pre>
   </section>
 

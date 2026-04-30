@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from src.escrow.api.agents import router as agents_router
 from src.escrow.api.experiments_dashboard import router as experiments_router
 from src.escrow.api.fund import router as fund_router
 from src.escrow.api.jobs import router as jobs_router
@@ -60,6 +61,7 @@ app.add_middleware(
 
 # --- Routers ---------------------------------------------------------------
 app.include_router(jobs_router)
+app.include_router(agents_router)
 app.include_router(fund_router)
 app.include_router(start_router)
 app.include_router(submit_router)
