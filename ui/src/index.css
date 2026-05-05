@@ -1,27 +1,29 @@
 :root {
-  --bg: #08090f;
-  --bg-elev: #0d0f17;
-  --surface: #12141d;
-  --surface-2: #1a1d2a;
-  --border: #262a3c;
-  --border-strong: #353a52;
-  --text: #f1f2f8;
-  --muted: #8b91ab;
-  --muted-strong: #b4bacf;
-  --accent: #7c6cff;
-  --accent-2: #22d3ee;
-  --accent-dim: #5446d9;
-  --accent-soft: rgba(124, 108, 255, 0.14);
-  --accent-glow: rgba(124, 108, 255, 0.45);
-  --success: #2ee5a1;
-  --success-soft: rgba(46, 229, 161, 0.12);
-  --warning: #ffb547;
-  --warning-soft: rgba(255, 181, 71, 0.12);
-  --danger: #ff5d6c;
-  --danger-soft: rgba(255, 93, 108, 0.12);
-  --gradient-brand: linear-gradient(135deg, #7c6cff 0%, #b14bff 50%, #22d3ee 100%);
-  --gradient-surface: linear-gradient(180deg, rgba(124, 108, 255, 0.08) 0%, rgba(8, 9, 15, 0) 100%);
-  --shadow-accent: 0 8px 24px -8px rgba(124, 108, 255, 0.55);
+  --bg: #f7f8fc;
+  --bg-elev: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f3f9;
+  --border: #e2e6ef;
+  --border-strong: #c9cfdc;
+  --text: #0f1222;
+  --muted: #5a6079;
+  --muted-strong: #353a52;
+  --accent: #6457ff;
+  --accent-2: #0ea5b7;
+  --accent-dim: #4a3fd9;
+  --accent-soft: rgba(100, 87, 255, 0.1);
+  --accent-glow: rgba(100, 87, 255, 0.35);
+  --success: #0fa968;
+  --success-soft: rgba(15, 169, 104, 0.1);
+  --warning: #c97700;
+  --warning-soft: rgba(201, 119, 0, 0.12);
+  --danger: #dc2a3f;
+  --danger-soft: rgba(220, 42, 63, 0.1);
+  --gradient-brand: linear-gradient(135deg, #6457ff 0%, #a13bff 50%, #0ea5b7 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(100, 87, 255, 0.06) 0%, rgba(247, 248, 252, 0) 100%);
+  --shadow-sm: 0 1px 2px rgba(15, 18, 34, 0.06);
+  --shadow-md: 0 4px 12px -2px rgba(15, 18, 34, 0.08), 0 2px 4px -2px rgba(15, 18, 34, 0.04);
+  --shadow-accent: 0 8px 24px -8px rgba(100, 87, 255, 0.5);
   --radius: 10px;
   --font: "DM Sans", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
@@ -40,11 +42,15 @@ body,
   margin: 0;
 }
 
+html {
+  font-size: 17px;
+}
+
 body {
   font-family: var(--font);
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(124, 108, 255, 0.12), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(34, 211, 238, 0.08), transparent 55%),
+    radial-gradient(1200px 600px at 10% -10%, rgba(100, 87, 255, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(14, 165, 183, 0.06), transparent 55%),
     var(--bg);
   color: var(--text);
   line-height: 1.5;
@@ -60,10 +66,11 @@ body {
 .app-header {
   border-bottom: 1px solid var(--border);
   padding: 1rem 1.5rem;
-  background:
-    linear-gradient(180deg, rgba(124, 108, 255, 0.08) 0%, rgba(8, 9, 15, 0) 100%),
-    linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .app-header-inner {
@@ -186,7 +193,7 @@ body {
 
 .step-item.active .step-dot {
   background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 12px var(--accent-glow);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .step-item.done .step-dot {
@@ -198,6 +205,7 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .panel h3 {
@@ -227,9 +235,18 @@ select {
   font-size: 0.9rem;
   padding: 0.55rem 0.75rem;
   border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  background: #ffffff;
   color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 textarea.code {
@@ -252,15 +269,17 @@ button {
   font-weight: 500;
   padding: 0.55rem 1rem;
   border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  background: #ffffff;
   color: var(--text);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
 }
 
 button:hover:not(:disabled) {
-  background: var(--border);
+  background: var(--surface-2);
+  border-color: var(--accent);
 }
 
 button:disabled {
@@ -361,11 +380,12 @@ button.ghost {
 pre.json {
   margin: 0;
   padding: 0.75rem;
-  background: var(--bg);
+  background: #0f1222;
+  color: #e6e8f2;
   border-radius: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid #1d2138;
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   overflow: auto;
   max-height: 420px;
   white-space: pre-wrap;
@@ -374,9 +394,10 @@ pre.json {
 
 .token-box {
   font-family: var(--mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   padding: 0.75rem;
-  background: var(--bg);
+  background: var(--surface-2);
+  color: var(--muted-strong);
   border-radius: 8px;
   border: 1px solid var(--border);
   word-break: break-all;
@@ -420,19 +441,20 @@ pre.json {
 }
 
 .nav-tab {
-  font-size: 0.75rem;
-  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--muted);
+  border: 1px solid var(--border-strong);
+  background: #ffffff;
+  color: var(--muted-strong);
 }
 
 .nav-tab.active {
-  color: var(--text);
+  color: var(--accent);
   border-color: var(--accent);
   background: var(--accent-soft);
-  box-shadow: 0 0 0 3px rgba(124, 108, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(100, 87, 255, 0.08);
 }
 
 .app-main-experiments {
@@ -659,7 +681,7 @@ pre.json {
 }
 
 .exp-lat-card {
-  background: var(--bg);
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.75rem;
@@ -669,8 +691,8 @@ pre.json {
 }
 
 .exp-lat-card.accent {
-  border-color: rgba(124, 108, 255, 0.5);
-  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg) 100%);
+  border-color: rgba(100, 87, 255, 0.5);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, #ffffff 100%);
 }
 
 .exp-lat-card .lbl {
@@ -706,7 +728,7 @@ pre.json {
   grid-column: 1 / -1;
   margin-top: 0.5rem;
   padding: 0.85rem;
-  background: var(--bg);
+  background: var(--surface-2);
   border-radius: 8px;
   border: 1px solid var(--border);
 }
@@ -730,7 +752,7 @@ pre.json {
   color: var(--muted);
   margin-bottom: 1rem;
   padding: 0.65rem;
-  background: var(--bg);
+  background: var(--surface-2);
   border-radius: 8px;
   border: 1px solid var(--border);
 }
@@ -788,7 +810,7 @@ pre.json {
 
 .agents-card {
   padding: 0.75rem;
-  background: var(--bg);
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 0.8rem;
