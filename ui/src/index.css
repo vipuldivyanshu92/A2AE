@@ -1,15 +1,27 @@
 :root {
-  --bg: #0c0e12;
-  --surface: #141820;
-  --surface-2: #1c222d;
-  --border: #2a3344;
-  --text: #e8ecf4;
-  --muted: #8b95a8;
-  --accent: #3d9cfd;
-  --accent-dim: #2563b8;
-  --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
+  --bg: #08090f;
+  --bg-elev: #0d0f17;
+  --surface: #12141d;
+  --surface-2: #1a1d2a;
+  --border: #262a3c;
+  --border-strong: #353a52;
+  --text: #f1f2f8;
+  --muted: #8b91ab;
+  --muted-strong: #b4bacf;
+  --accent: #7c6cff;
+  --accent-2: #22d3ee;
+  --accent-dim: #5446d9;
+  --accent-soft: rgba(124, 108, 255, 0.14);
+  --accent-glow: rgba(124, 108, 255, 0.45);
+  --success: #2ee5a1;
+  --success-soft: rgba(46, 229, 161, 0.12);
+  --warning: #ffb547;
+  --warning-soft: rgba(255, 181, 71, 0.12);
+  --danger: #ff5d6c;
+  --danger-soft: rgba(255, 93, 108, 0.12);
+  --gradient-brand: linear-gradient(135deg, #7c6cff 0%, #b14bff 50%, #22d3ee 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(124, 108, 255, 0.08) 0%, rgba(8, 9, 15, 0) 100%);
+  --shadow-accent: 0 8px 24px -8px rgba(124, 108, 255, 0.55);
   --radius: 10px;
   --font: "DM Sans", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
@@ -30,7 +42,10 @@ body,
 
 body {
   font-family: var(--font);
-  background: var(--bg);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(124, 108, 255, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(34, 211, 238, 0.08), transparent 55%),
+    var(--bg);
   color: var(--text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -45,7 +60,10 @@ body {
 .app-header {
   border-bottom: 1px solid var(--border);
   padding: 1rem 1.5rem;
-  background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+  background:
+    linear-gradient(180deg, rgba(124, 108, 255, 0.08) 0%, rgba(8, 9, 15, 0) 100%),
+    linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+  backdrop-filter: blur(8px);
 }
 
 .app-header-inner {
@@ -69,6 +87,11 @@ body {
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .brand p {
@@ -163,7 +186,7 @@ body {
 
 .step-item.active .step-dot {
   background: var(--accent);
-  box-shadow: 0 0 10px var(--accent-dim);
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 12px var(--accent-glow);
 }
 
 .step-item.done .step-dot {
@@ -246,13 +269,16 @@ button:disabled {
 }
 
 button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #041018;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: var(--shadow-accent);
 }
 
 button.primary:hover:not(:disabled) {
-  filter: brightness(1.08);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 28px -8px var(--accent-glow);
 }
 
 button.danger {
@@ -262,7 +288,7 @@ button.danger {
 }
 
 button.danger:hover:not(:disabled) {
-  background: rgba(248, 113, 113, 0.12);
+  background: var(--danger-soft);
 }
 
 button.ghost {
@@ -277,15 +303,15 @@ button.ghost {
 }
 
 .alert.error {
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.35);
-  color: #fecaca;
+  background: var(--danger-soft);
+  border: 1px solid rgba(255, 93, 108, 0.4);
+  color: #ffc1c7;
 }
 
 .alert.success {
-  background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.35);
-  color: #a7f3d0;
+  background: var(--success-soft);
+  border: 1px solid rgba(46, 229, 161, 0.4);
+  color: #a8f5d3;
 }
 
 .side-panel h3 {
@@ -324,7 +350,8 @@ button.ghost {
 .status-pill.settled,
 .status-pill.verified {
   color: var(--success);
-  border-color: rgba(52, 211, 153, 0.4);
+  border-color: rgba(46, 229, 161, 0.45);
+  background: var(--success-soft);
 }
 
 .status-pill.refunded {
@@ -404,7 +431,8 @@ pre.json {
 .nav-tab.active {
   color: var(--text);
   border-color: var(--accent);
-  background: rgba(61, 156, 253, 0.12);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 3px rgba(124, 108, 255, 0.08);
 }
 
 .app-main-experiments {
@@ -490,12 +518,14 @@ pre.json {
 
 .exp-pill.live {
   color: var(--success);
-  border-color: rgba(52, 211, 153, 0.45);
+  border-color: rgba(46, 229, 161, 0.5);
+  background: var(--success-soft);
 }
 
 .exp-pill.sim {
   color: var(--warning);
-  border-color: rgba(251, 191, 36, 0.45);
+  border-color: rgba(255, 181, 71, 0.5);
+  background: var(--warning-soft);
 }
 
 .exp-grid {
@@ -639,7 +669,8 @@ pre.json {
 }
 
 .exp-lat-card.accent {
-  border-color: rgba(61, 156, 253, 0.45);
+  border-color: rgba(124, 108, 255, 0.5);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg) 100%);
 }
 
 .exp-lat-card .lbl {
